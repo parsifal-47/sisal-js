@@ -1,0 +1,11 @@
+definition main
+
+function Main( A,B: array[array[real]];  M,N,L : integer returns array[array[real]] )
+  for i in 1, M cross j in 1, L
+  returns array of 
+      for k in 1, N repeat
+	R := A[i,k] * B[k,j]
+      returns sum of R 
+      end for
+  end for
+end function

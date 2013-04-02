@@ -1,0 +1,30 @@
+// CONVOLVER
+
+// This routine applies a general filter A of M elements to a real sequence
+// X of N elements.
+//
+//    Y[i] = SUMMATION(j=1,M) of A[i] * X[i+j-1]     for i = 1,2,...N-M+1
+//
+// Inputs: M, Cycles   where N = M * Cycles
+//
+
+definition main
+
+function Conv( M : integer; A : array[double]; N : integer; X : array[double]
+ returns array[double] )
+    for I in 1, N-M+1
+     returns array of 
+		for J in 1, M
+		 returns sum of A[J] * X[I+J-1]
+		end for
+    end for
+end function
+
+function Main( M : integer; Cycles : integer returns array[double] )
+    let
+	A := for I in 1, M returns array of I :double end for;
+	X := for I in 1, M * Cycles returns array of I :double end for
+    in
+	Conv( M, A, M * Cycles, X )
+    end let
+end function

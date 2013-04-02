@@ -1,0 +1,57 @@
+// DISCRETE FOURIER TRANSFORM - FORWARD
+//
+// Y[K] := SUMMATION(J=1,N) X[J] * etothe( X ) For K = 1,2,...N
+//         X := (2 * Pi * i (J-1) * (K-1)) / N
+//
+// e ** ix  := cos(x) + i*sin(x)
+//
+
+definition main
+
+type Complex = record[ R : double; I : double ]
+type OneDim = array [Complex]
+
+function sin( N : double returns double )
+1
+end function
+
+function cos( N : double returns double )
+1
+end function
+
+function dft( N : integer; X : OneDim returns OneDim )
+    let
+       Pi := 3.1415926535897932D;
+       Theta := (2.0D * Pi) / (N : double)
+    in
+       for K in 1, N repeat
+           Rdata,
+           Idata := for J in 1, N repeat
+                         EArg := Theta * (J-1) : double * (K-1) : double;
+                         Er := cos( EArg );
+                         Ei := sin( EArg );
+                         Rvalue := (X[J].R * Er) - (X[J].I * Ei);
+                         Ivalue := (X[J].I * Er) + (X[J].R * Ei)
+                     returns sum of Rvalue;
+                             sum of Ivalue
+                     end for
+
+       returns array of record Complex { R := Rdata; I := Idata }
+       end for
+    end let
+end function
+
+
+function Main( N : integer returns OneDim )
+    let
+       Pi := 3.1415926535897932D;
+       DRN := N : double;
+       X := for J in 1, N repeat
+                  Rvalue := sin( (DRN * Pi) / 8.0D );
+                  Ivalue := 0.0D
+               returns array of record Complex { R := Rvalue; I := Ivalue }
+              end for
+    in
+       dft( N, X )
+    end let
+end function

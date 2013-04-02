@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script src=sisal.lex.js ></script>	
+	<script src=sisal.ir.js ></script>	
+	<title>Parser</title>
+</head>
+
+<body>
+
+<div class="container" id="page">
+<h2>
+Sisal translator check
+</h2>
+<script language=JavaScript>
+function trn() {
+ast=module.exports.parse(document.getElementById('source').innerHTML);
+console.log(ast);
+ir= new sisalir(ast);
+console.log(ir);
+}
+</script>
+<textarea id=source rows=12 cols=80>
+function Main( A,B: array[array[real]];  M,N,L : integer returns array[array[real]] )
+  for i in 1, M cross j in 1, L
+  returns array of 
+      for k in 1, N repeat
+	R := A[i,k] * B[k,j]
+      returns sum of R 
+      end for
+  end for
+end function
+</textarea>
+<p><button onclick='trn();'>translate</button></p>
+<p>IR:
+<div id=IR></div></p>
+<p>AST:
+<div id=AST></div></p>
+</div><!-- page -->
+
+</body>
+</html>
+ 
