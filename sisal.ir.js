@@ -17,6 +17,12 @@ complexNode = {
 	}
 }
 
+helper = {
+	isArray : function (value) {
+		return (Object.prototype.toString.call(value) === '[object Array]');
+	}
+}
+
 function simpleType(name) {
 	this.name = name;
 }
@@ -49,6 +55,16 @@ function functionNode(name, inPorts, outPorts) {
 }
 functionNode.prototype=complexNode;
 
+function forAllNode(range, body, returns, inPorts, outPorts) {
+	this.nodes=[];
+	this.edges=[];
+	this.inPorts = inPorts;
+	this.outPorts = outPorts;
+	this.range = range;
+	this.body = body;
+	this.returns = returns;
+}
+
 function typedName(id, dtype) {
 	this.id=id;
 	this.dtype=dtype;
@@ -57,10 +73,12 @@ function typedName(id, dtype) {
 function irGen() {
 	var self = this;
 	this.parseType = function (astNode) {
-		if (Object.prototype.toString.call(astNode) === '[object Array]') { // Parse as array of parsed instances
+		if (helper.isArray(astNode)) { // Parse as array of parsed instances
 			var tuple=[];
 			for (var i=0;i<astNode.length;i++) {
-				tuple.push(self.parseType(astNode[i]));
+				var t=self.parseType(astNode[i]);
+				if (helper.isArray(t)) tuple = tuple.concat(t);
+				else tuple.push(t);
 			}
 			return tuple;
 		}
@@ -84,7 +102,7 @@ function irGen() {
 	}
 	
 	this.parse = function (astNode, inputs, outputs, undefined) {
-		if (Object.prototype.toString.call(astNode) === '[object Array]') { // Parse as array of parsed instances
+		if (helper.isArray(astNode)) { // Parse as array of parsed instances
 			var first=self.parse(astNode[0], inputs, outputs);
 			for (var i=1;i<astNode.length;i++) {
 				first.addNode(self.parse(astNode[i], inputs, outputs));
@@ -97,18 +115,21 @@ function irGen() {
 				var fOutputs=self.parseType(astNode.returns);
 				// Create SubNodes
 				
-/*				if (astNode.expressions.length!==fOutputs.nodes.length) {
-					throw "Defined and implemented output mismatch for function " + astNode.name;
-				}*/
+				if (astNode.expressions.length!==fOutputs.length) {
+					throw "Defined and implemented output mismatch for the function " + astNode.name;
+				}
 
 				var func=new functionNode(astNode.name, fInputs, fOutputs);
 				
 				for (var i=0;i<astNode.expressions.length;i++) {
-					var node=self.parse(astNode.expressions[i], fInputs, fOutputs[i]);
+					var node=self.parse(astNode.expressions[i], fInputs, [fOutputs[i]]);
 					func.addNode(node);
 				}
 				// Connect SubNodes	
 				return func;
+				
+			case "For":
+				return new forAllNode(self.parse(astNode.range), self.parse(astNode.body), self.parse(astNode.returns), inputs, outputs);
 		}
 	}
 }
