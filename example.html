@@ -15,13 +15,26 @@ Sisal translator check
 </h2>
 <script language=JavaScript>
 function trn() {
-ast=module.exports.parse(document.getElementById('source').innerHTML);
+ast=module.exports.parse(document.getElementById('source').value);
 console.log(ast);
 ir= new sisalir(ast);
 console.log(ir);
 }
 </script>
 <textarea id=source rows=12 cols=80>
+function Main2( M,N : integer returns integer )
+	M+N*M
+end function
+</textarea>
+<!-- 
+function Main2( M,N : integer returns integer )
+	M+N
+end function
+-->
+<p><button onclick='trn();'>translate (result in console log)</button></p>
+
+Another example:
+<pre>
 function Main( A,B: array[array[real]];  M,N,L : integer returns array[array[real]] )
   for i in 1, M cross j in 1, L
   returns array of 
@@ -31,12 +44,7 @@ function Main( A,B: array[array[real]];  M,N,L : integer returns array[array[rea
       end for
   end for
 end function
-</textarea>
-<p><button onclick='trn();'>translate</button></p>
-<p>IR:
-<div id=IR></div></p>
-<p>AST:
-<div id=AST></div></p>
+</pre>
 </div><!-- page -->
 
 </body>
