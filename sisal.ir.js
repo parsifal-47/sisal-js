@@ -84,9 +84,9 @@ function functionNode(name, inPorts, outPorts) {
 functionNode.prototype=complexNode;
 
 function forAllNode(range, body, returns, inPorts, outPorts) {
-	this.nodes=[];
-	this.edges=[];
-	this.inPorts = inPorts;
+	this.nodes=[]; // There are no usual nodes inside forAll node
+	this.edges=[]; // There are no explicit connections also
+	this.inPorts = inPorts;	
 	this.outPorts = outPorts;
 	this.range = range;
 	this.body = body;
@@ -201,9 +201,9 @@ function irGen() {
 	
 	this.parse = function (astNode, inputs, undefined) {
 		if (helper.isArray(astNode)) { // Parse as array of parsed instances
-			var first=self.parse(astNode[0], inputs, outputs);
+			var first=self.parse(astNode[0], inputs);
 			for (var i=1;i<astNode.length;i++) {
-				first.addNodes(self.parse(astNode[i], inputs, outputs));
+				first.addNodes(self.parse(astNode[i], inputs));
 			}
 			return first;
 		}
@@ -240,7 +240,7 @@ function irGen() {
 				return func;
 				
 			case "For":
-				return new forAllNode(self.parse(astNode.range), self.parse(astNode.body), self.parse(astNode.returns), inputs, outputs);
+				return new forAllNode(self.parse(astNode.range), self.parse(astNode.body), self.parse(astNode.returns), inputs, [new coloredPort(colors.getNew())]);
 				
 			case "BinaryExpression":
 				var left = self.parse(astNode.left, inputs);
