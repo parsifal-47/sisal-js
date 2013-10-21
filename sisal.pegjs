@@ -619,20 +619,22 @@ UnaryOperation
 PostfixOperation
 	= base:Operand 
 	  args:(
-		 __ "(" __ arguments:FunctionArgumentList? __ ")"
+		 __ "(" __ arguments:FunctionArgumentList? __ ")" { return {type:"()", exp: arguments}; }
 	   / __ "." __ name:IdentifierName    { return name; }
-	   / __ "[" __ expList:ExpressionList __ "]"
+	   / __ "[" __ expList:ExpressionList __ "]" { return {type:"[]", exp: expList}; }
 	   / __ ReplaceToken __ "{" __ definitions: DefinitionList __ "}"
 	   / __ TagToken __ name:Identifier 
 	   / __ ":" __ ty:DataType	   
 	  )* {
-		var result = base;
-		for (var i = 0; i < args.length; i++) {
-			result = {
+		if (args.length==0) return base;
+		
+		var result = {
 				type: "Postfix",
-				base: result,
-				name: args[i]
+				base: base,
+				opList: []
 			};
+		for (var i = 0; i < args.length; i++) {
+			result.opList.push(args[i]);
 		}
 		return result;
 	  }
@@ -725,13 +727,13 @@ LoopExpression
 	/ ForToken __ RepeatToken __ body:DefinitionList __ WhileToken __ expr:Expression __ ReturnsToken __ ret:ReturnExpression __ EndToken __ ForToken {return {type: "For", init:null, condition:expr, body:body, returns:ret }}
 
 RangeGen
-	= range:ForIndexRange gen:( (__ CrossToken / __ DotToken ) __ RangeGen)? {return {type: "CrossDot", q:gen!==""?gen[0]:"", range:range, gen:gen!==""?gen[2]:"" }}
+	= range:ForIndexRange gen:( (__ CrossToken / __ DotToken ) __ RangeGen)? { if (gen!=="") return {type:gen[0][1][0], left:range, right:gen[2] }; else return range;}
 
 ForIndexRange
 	= name:Identifier __ InToken __ range:ForIndexRangeTriplet {return {type: "Range", name:name, range:range }}
 	
 ForIndexRangeTriplet
-	= exp:Expression exp2:(__ "," __ Expression )? exp3:(__ "," __ Expression )?  { return {type:"Range", exp:exp, exp2:exp2 !== "" ? exp2[3] : "", exp3:exp3!==""?exp3[3]:"" }}
+	= exp:Expression exp2:(__ "," __ Expression )? exp3:(__ "," __ Expression )?  { return {type:"RangeTriplet", exp:exp, exp2:exp2 !== "" ? exp2[3] : "", exp3:exp3!==""?exp3[3]:"" }}
 
 ReturnExpression
 	= r:ReductionWithInitial __ OfToken __ el:ExpressionList el2:(__ WhenToken __ ExpressionList )? rt:(__ ";" __ ReturnExpression)? 
