@@ -343,7 +343,7 @@ CrossToken      = "cross"            !IdentifierPart
 DotToken        = "dot"              !IdentifierPart
 OfToken         = "of"               !IdentifierPart
 WhenToken       = "when"             !IdentifierPart
-ArrayToken      = "array"            !IdentifierPart
+ArrayToken      = "array"            !IdentifierPart {return "array";}
 StreamToken     = "stream"           !IdentifierPart
 
 /*
@@ -745,7 +745,7 @@ ReductionWithInitial
 ReductionName
 	= Identifier
 	/ ArrayToken
-	/ StreamToken
+	/ StreamToken 
 
 /* ===== A.5 Functions and Programs ===== */
 

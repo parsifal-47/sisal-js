@@ -6,7 +6,10 @@ var color = {
 	},
 	getColor : function (nodes) {
 		if (helper.isArray(nodes)) return this.getColor(nodes[0]); // output node always come first
-		if (helper.isArray(nodes.outPorts)) return nodes.outPorts[0].color;
+		if (helper.isArray(nodes.outPorts)) {
+			if (!nodes.outPorts[0]) return 0; // no out port -- no color
+			return nodes.outPorts[0].color;
+		}
 		return nodes.color;
 	},
 	assign : function (nodes) {
@@ -41,6 +44,8 @@ var edge = {
 var port = {
 	colored : function (color) { // colored port
 		this.color = color;
+	},
+	empty : function () {
 	},
 	typedName : function (id, dtype) { // port with name & type
 		this.id = id;

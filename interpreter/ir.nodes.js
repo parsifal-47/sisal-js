@@ -21,32 +21,59 @@ var node = {
 			} else 
 				this.nodes.push(node);
 		}
-	},
-
-	virtualComplex : function () {
+	}
+}
+node.virtualComplex = function () {
 		this.nodes = [];
 		this.edges = [];
 		this.pureVirtual = true;
-	},
+	}
 
-	func : function (name, inPorts, outPorts) {
+node.virtualComplex.prototype = node.complex;
+	
+node.func = function (name, inPorts, outPorts) {
 		this.type = "function";
 		this.name = name;
 		this.inPorts = inPorts;
 		this.outPorts = outPorts;
 		this.nodes = [];
 		this.edges = [];
-	},
+	}
 
-	rangeGen : function (inPorts, outPorts) {
+node.func.prototype = node.complex;
+
+node.loopBody = function (inPorts, outPorts) {
+		this.type = "loopBody";
+		this.inPorts = inPorts;
+		this.outPorts = outPorts;
+		this.nodes = [];
+		this.edges = [];
+	}
+
+node.loopBody.prototype = node.complex;
+
+node.loopReturn = function (name, inPorts, outPorts) {
+		this.type = "loopReturn";
+		this.name = name;
+		this.inPorts = inPorts;
+		this.outPorts = outPorts;
+		this.nodes = [];
+		this.edges = [];
+	}
+
+node.loopReturn.prototype = node.complex;
+	
+node.rangeGen = function (inPorts, outPorts) {
 		this.type = "rangeGen";
 		this.inPorts = inPorts;
 		this.outPorts = outPorts;
 		this.nodes = [];
 		this.edges = [];
-	},
+	}
+	
+node.rangeGen.prototype = node.complex;
 
-	forAll : function (range, body, returns, inPorts, outPorts) {
+node.forAll = function (range, body, returns, inPorts, outPorts) {
 		this.type = "forall";
 		this.inPorts = inPorts;	
 		this.outPorts = outPorts;
@@ -55,50 +82,54 @@ var node = {
 		this.returns = returns;
 		this.nodes = []; // There are no usual nodes inside forAll node
 		this.edges = []; // There are no explicit connections also
-	},
-
-	binary : function (op, inPorts, outPorts) {
+	}
+	
+node.forAll.prototype = node.complex;
+	
+node.binary = function (op, inPorts, outPorts) {
 		this.type = "binary";
 		this.op = op;
 		this.inPorts = inPorts;
 		this.outPorts = outPorts;
-	},
+	}
+	
+node.element = function (inPorts, outPorts) {
+		this.type = "element";
+		this.inPorts = inPorts;
+		this.outPorts = outPorts;
+	}
 
-	range : function (inPorts, outPorts) {
+node.range = function (inPorts, outPorts) {
 		this.type = "range";
 		this.inPorts = inPorts;
 		this.outPorts = outPorts;
-	},
+	}
 
-	scatter : function (inPort, outPort) {
+node.scatter = function (inPort, outPort) {
 		this.type = "scatter";
 		this.inPorts = [inPort];
 		this.outPorts = [outPort];
-	},
+	}
 
-	identifier : function Node(id, color) { // port with name
+node.identifier = function Node(id, color) { // port with name
 		this.type = "id";
 		this.inPorts = [];
 		this.outPorts = [new port.colored(color)];
 		this.id = id;
 		this.color = color;
-	},
+	}
 	
-	constant : function (value, color) { // port with name
+node.constant = function (value, color) { // port with name
 		this.type = "constant";
 		this.inPorts = [];
 		this.outPorts = [new port.colored(color)];
 		this.value = value;
 		this.color = color;
-	},
+	}
 	
-	fake : function (color) {
+node.fake = function (color) {
+		this.inPorts = [];
+		this.outPorts = [];
 		this.color = color;
 		this.fake = 1;
 	}
-}
-
-node.func.prototype = node.complex;
-node.virtualComplex.prototype = node.complex;
-node.forAll.prototype = node.complex;
-node.rangeGen.prototype = node.complex;
