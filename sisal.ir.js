@@ -1,4 +1,4 @@
-helper = {
+var helper = {
 	isArray : function (value) {
 		return (Object.prototype.toString.call(value) === '[object Array]');
 	},
@@ -12,37 +12,13 @@ helper = {
 		else if(!left.fake) merged.push(left);
 
 		if (helper.isArray(right)) merged = merged.concat(right);
-		else if(!right.fake) merged.push(right);
+		else if((right) && (!right.fake)) merged.push(right);
 		
 		return merged;	
 	}
 }
 
-complexNode = {
-	addNodes : function (node) {
-		if (!node) return;
-		
-		if (helper.isArray(node)) {
-			this.nodes = this.nodes.concat(node);
-			return;
-		}
-		
-		// If the node is complex it have to be disassembled
-		if (node.pureVirtual) { //node instanceof virtualComplexNode) { -- this typing is not working, using duck typing
-			var increment=this.nodes.length;
-			for (var i=0;i<node.nodes.length;i++)
-				this.nodes.push(node.nodes[i]);
-			// copy variables
-			for (var i=0;i<node.edges.length;i++) {
-				this.edges.push(new edge(node.edges[i].nodeFrom===-1?-1:node.edges[i].nodeFrom+increment, portFrom, 
-														node.edges[i].nodeTo===-1?-1:node.edges[i].nodeTo+increment, portTo));
-			}
-		} else 
-			this.nodes.push(node);
-	}
-}
-
-colors = {
+var color = {
 	current : 0,
 	getNew : function () {
 		this.current += 1;
@@ -62,106 +38,142 @@ colors = {
 	}
 }
 
-function simpleType(name) {
-	this.name = name;
+var type ={
+	simple: function (name) {
+		this.name = name;
+	},
+
+	array: function (subType) {
+		this.isArray = true;
+		this.subType = subType;
+	}
 }
 
-function arrayType(subType) {
-	this.isArray = true;
-	this.subType = subType;
+var edge = {
+	single: function (nodeFrom, portFrom, nodeTo, portTo) {
+		this.nodeFrom = nodeFrom;
+		this.portFrom = portFrom;
+		this.nodeTo = nodeTo;
+		this.portTo = portTo;
+	}
 }
 
-function virtualComplexNode () {
-	this.nodes=[];
-	this.edges=[];
-	this.pureVirtual = true;
-}
-virtualComplexNode.prototype=complexNode;
+var node = {
+	complex : { // Interface class for all complex nodes
+		addNodes : function (node) {
+			if (!node) return;
+			
+			if (helper.isArray(node)) {
+				this.nodes = this.nodes.concat(node);
+				return;
+			}
+			
+			// If the node is complex it have to be disassembled
+			if (node.pureVirtual) { //node instanceof virtualComplexNode) { -- this typing is not working, using duck typing
+				var increment=this.nodes.length;
+				for (var i=0;i<node.nodes.length;i++)
+					this.nodes.push(node.nodes[i]);
+				// copy variables
+				for (var i=0;i<node.edges.length;i++) {
+					this.edges.push(new edge.single(node.edges[i].nodeFrom===-1?-1:node.edges[i].nodeFrom+increment, portFrom, 
+															node.edges[i].nodeTo===-1?-1:node.edges[i].nodeTo+increment, portTo));
+				}
+			} else 
+				this.nodes.push(node);
+		}
+	},
 
-function edge(nodeFrom, portFrom, nodeTo, portTo) {
-	this.nodeFrom = nodeFrom;
-	this.portFrom = portFrom;
-	this.nodeTo = nodeTo;
-	this.portTo = portTo;
+	virtualComplex : function () {
+		this.nodes = [];
+		this.edges = [];
+		this.pureVirtual = true;
+	},
+
+	func : function (name, inPorts, outPorts) {
+		this.type = "function";
+		this.name = name;
+		this.inPorts = inPorts;
+		this.outPorts = outPorts;
+		this.nodes = [];
+		this.edges = [];
+	},
+
+	rangeGen : function (inPorts, outPorts) {
+		this.type = "rangeGen";
+		this.inPorts = inPorts;
+		this.outPorts = outPorts;
+		this.nodes = [];
+		this.edges = [];
+	},
+
+	forAll : function (range, body, returns, inPorts, outPorts) {
+		this.type = "forall";
+		this.inPorts = inPorts;	
+		this.outPorts = outPorts;
+		this.range = range;
+		this.body = body;
+		this.returns = returns;
+		this.nodes = []; // There are no usual nodes inside forAll node
+		this.edges = []; // There are no explicit connections also
+	},
+
+	binary : function (op, inPorts, outPorts) {
+		this.type = "binary";
+		this.op = op;
+		this.inPorts = inPorts;
+		this.outPorts = outPorts;
+	},
+
+	range : function (inPorts, outPorts) {
+		this.type = "range";
+		this.inPorts = inPorts;
+		this.outPorts = outPorts;
+	},
+
+	scatter : function (inPort, outPort) {
+		this.type = "scatter";
+		this.inPorts = [inPort];
+		this.outPorts = [outPort];
+	},
+
+	identifier : function Node(id, color) { // port with name
+		this.type = "id";
+		this.inPorts = [];
+		this.outPorts = [new port.colored(color)];
+		this.id = id;
+		this.color = color;
+	},
+	
+	constant : function (value, color) { // port with name
+		this.type = "constant";
+		this.inPorts = [];
+		this.outPorts = [new port.colored(color)];
+		this.value = value;
+		this.color = color;
+	},
+	
+	fake : function (color) {
+		this.color = color;
+		this.fake = 1;
+	}
 }
 
-function functionNode(name, inPorts, outPorts) {
-	this.type = "function";
-	this.nodes=[];
-	this.edges=[];
-	this.inPorts = inPorts;
-	this.outPorts = outPorts;
-	this.name=name;
-}
-functionNode.prototype=complexNode;
+node.func.prototype = node.complex;
+node.virtualComplex.prototype = node.complex;
+node.forAll.prototype = node.complex;
+node.rangeGen.prototype = node.complex;
 
-function rangeGenNode(inPorts, outPorts) {
-	this.type = "rangeGen";
-	this.nodes=[];
-	this.edges=[];
-	this.inPorts = inPorts;
-	this.outPorts = outPorts;
-}
-rangeGenNode.prototype=complexNode;
-
-function forAllNode(range, body, returns, inPorts, outPorts) {
-	this.type = "forall";
-	this.nodes=[]; // There are no usual nodes inside forAll node
-	this.edges=[]; // There are no explicit connections also
-	this.inPorts = inPorts;	
-	this.outPorts = outPorts;
-	this.range = range;
-	this.body = body;
-	this.returns = returns;
-}
-forAllNode.prototype=complexNode;
-
-function binaryExpNode(op, inPorts, outPorts) {
-	this.type = "binary";
-	this.op = op;
-	this.inPorts = inPorts;
-	this.outPorts = outPorts;
+var port = {
+	colored : function (color) { // colored port
+		this.color = color;
+	},
+	typedName : function (id, dtype) { // port with name & type
+		this.id = id;
+		this.dtype = dtype;
+	}	
 }
 
-function rangeNode(inPorts, outPorts) {
-	this.type = "range";
-	this.inPorts = inPorts;
-	this.outPorts = outPorts;
-}
-
-function scatterNode(inPort, outPort) {
-	this.type = "scatter";
-	this.inPorts = [inPort];
-	this.outPorts = [outPort];
-}
-
-function typedName(id, dtype) { // port with name & type
-	this.id = id;
-	this.dtype = dtype;
-}
-function identifierNode(id, color) { // port with name
-	this.type = "id";
-	this.inPorts = [];
-	this.outPorts = [new coloredPort(color)];
-	this.id = id;
-	this.color = color;
-}
-function constantNode(value, color) { // port with name
-	this.type = "constant";
-	this.inPorts = [];
-	this.outPorts = [new coloredPort(color)];
-	this.value = value;
-	this.color = color;
-}
-function coloredPort(color) { // colored port
-	this.color = color;
-}
-function fakeNode(color) {
-	this.color = color;
-	this.fake = 1;
-}
-
-function irGen() {
+function irGenerator() {
 	var self = this;
 	this.parseType = function (astNode) {
 		if (helper.isArray(astNode)) { // Parse as array of parsed instances
@@ -174,20 +186,20 @@ function irGen() {
 			return tuple;
 		}
 		if (helper.isString(astNode) && astNode) {
-			return new simpleType(astNode);
+			return new type.simple(astNode);
 		}
 		if (astNode.type==="TypedIdList") {
 			var dtype, tuple = [];
 			dtype = self.parseType(astNode.dtype);
 			for (var i=0;i<astNode.ids.length;i++) {
-				tuple.push(new typedName(astNode.ids[i], dtype));
+				tuple.push(new port.typedName(astNode.ids[i], dtype));
 			}
 			return tuple;
 		}
 		if (astNode.type==="ArrayOf") {
 			var dtype;
 			dtype = self.parseType(astNode.dtype);
-			return new arrayType(dtype);
+			return new type.array(dtype);
 		}
 	}
 	
@@ -198,7 +210,7 @@ function irGen() {
 				for (var j = 0; j< cNode.nodes.length; j++) {
 					for (var k = 0; k< cNode.nodes[j].inPorts.length; k++) {
 						if (cNode.inPorts[i].color==cNode.nodes[j].inPorts[k].color) {
-							cNode.edges.push(new edge(-1, i, j, k));
+							cNode.edges.push(new edge.single(-1, i, j, k));
 						}
 					}
 				}
@@ -209,7 +221,7 @@ function irGen() {
 				if (!cNode.inPorts[i].color) continue;
 				for (var j = 0; j< cNode.outPorts.length; j++) {
 					if (cNode.inPorts[i].color==cNode.outPorts[j].color) {
-						cNode.edges.push(new edge(-1, i, -1, j));
+						cNode.edges.push(new edge.single(-1, i, -1, j));
 					}
 				}
 			}
@@ -220,7 +232,7 @@ function irGen() {
 				for (var j = 0; j< cNode.nodes.length; j++) {
 					for (var k = 0; k< cNode.nodes[j].outPorts.length; k++) {
 						if (cNode.outPorts[i].color==cNode.nodes[j].outPorts[k].color) {
-							cNode.edges.push(new edge(j, k, -1, i));
+							cNode.edges.push(new edge.single(j, k, -1, i));
 						}
 					}
 				}
@@ -235,7 +247,7 @@ function irGen() {
 					for (var j = 0; j< cNode.nodes.length; j++) {
 						for (var k = 0; k< cNode.nodes[j].inPorts.length; k++) {
 							if (cNode.nodes[l].outPorts[i].color==cNode.nodes[j].inPorts[k].color) {
-								cNode.edges.push(new edge(l, i, j, k));
+								cNode.edges.push(new edge.single(l, i, j, k));
 							}
 						}
 					}
@@ -251,17 +263,36 @@ function irGen() {
 		var outPorts = [];
 		for (var i = 0; i<nodes.length; i++) {
 			if (nodes[i].type!="range") continue;
-			var tcolor = colors.getNew();
-			scatter.push(new scatterNode(new coloredPort(colors.getColor(nodes[i])), new coloredPort(tcolor)));
-			outPorts.push(new coloredPort(tcolor));
+			var tcolor = color.getNew();
+			scatter.push(new node.scatter(new port.colored(color.getColor(nodes[i])), new port.colored(tcolor)));
+			outPorts.push(new port.colored(tcolor));
 		}
-		var gen = new rangeGenNode(inputs, outPorts);
+		var gen = new node.range(inputs, outPorts);
 		gen.addNodes(scatter);
 		gen.addNodes(nodes);
 		self.connectColored(gen);
 		return gen;
 	}
 	
+	this.parseBody = function (astNode, inputs) { // Body is special case, it conatins self-created ports as "old" values
+		return "";
+		var nodes = self.parse(astNode, inputs);
+		// add scatter for every range node
+		var scatter = [];
+		var outPorts = [];
+		for (var i = 0; i<nodes.length; i++) {
+			if (nodes[i].type!="range") continue;
+			var tcolor = color.getNew();
+			scatter.push(new node.scatter(new port.colored(color.getColor(nodes[i])), new port.colored(tcolor)));
+			outPorts.push(new port.colored(tcolor));
+		}
+		var gen = new node.range(inputs, outPorts);
+		gen.addNodes(scatter);
+		gen.addNodes(nodes);
+		self.connectColored(gen);
+		return gen;
+	}
+
 	this.parse = function (astNode, inputs, undefined) {
 		if (helper.isArray(astNode)) { // Parse as array of parsed instances
 			var first=self.parse(astNode[0], inputs);
@@ -273,14 +304,14 @@ function irGen() {
 		if (helper.isString(astNode) && astNode) {
 			if (helper.isArray(inputs)) {
 				for (var i = 0; i<inputs.length; i++) {
-					if (inputs[i].id==astNode) return new fakeNode(inputs[i].color);
+					if (inputs[i].id==astNode) return new node.fake(inputs[i].color);
 				}
 			}
-			return new identifierNode(astNode, colors.getNew());
+			return new node.identifier(astNode, color.getNew());
 		}
 		switch (astNode.type) {
 			case "NumericLiteral":
-				return new constantNode(astNode.value, colors.getNew());
+				return new node.constant(astNode.value, color.getNew());
 				
 			case "Function":
 				var fInputs=self.parseType(astNode.params);
@@ -291,13 +322,13 @@ function irGen() {
 					throw "Defined and implemented output mismatch for the function " + astNode.name;
 				}
 				
-				colors.assign(fInputs);
+				color.assign(fInputs);
 
-				var func=new functionNode(astNode.name, fInputs, fOutputs);
+				var func=new node.func(astNode.name, fInputs, fOutputs);
 				
 				for (var i=0;i<astNode.expressions.length;i++) {
 					var nodes=self.parse(astNode.expressions[i], fInputs);
-					fOutputs[i].color = colors.getColor(nodes);
+					fOutputs[i].color = color.getColor(nodes);
 					func.addNodes(nodes);
 				}
 				// Connect SubNodes
@@ -307,15 +338,15 @@ function irGen() {
 
 			case "For":
 				var range = self.parseRangeGen(astNode.range, inputs);
-				var body = "";//self.parse(astNode.body, inputs);
+				var body = self.parseBody(astNode.body, helper.merge(range.outPorts, inputs));
 				var returns = "";//self.parse(astNode.returns, inputs);
-				return new forAllNode(range, body, returns, inputs, [new coloredPort(colors.getColor(returns))]);
+				return new node.forAll(range, body, returns, inputs, [new port.colored(color.getColor(returns))]);
 				
 			case "BinaryExpression":
 				var left = self.parse(astNode.left, inputs);
 				var right = self.parse(astNode.right, inputs);
-				var op = new binaryExpNode(astNode.operator, 
-					[new coloredPort(colors.getColor(left)), new coloredPort(colors.getColor(right))], [new coloredPort(colors.getNew())]);
+				var op = new node.binary(astNode.operator, 
+					[new port.colored(color.getColor(left)), new port.colored(color.getColor(right))], [new port.colored(color.getNew())]);
 					
 				return helper.merge([op], left, right);
 				
@@ -326,8 +357,8 @@ function irGen() {
 				var left = self.parse(astNode.exp, inputs);
 				var right = self.parse(astNode.exp2, inputs);
 				if (astNode.exp3) throw "Step is not implemented for triplet";// TODO: add exp3 which means step
-				var op = new rangeNode(
-					[new coloredPort(colors.getColor(left)), new coloredPort(colors.getColor(right))], [new coloredPort(colors.getNew())]);
+				var op = new node.range(
+					[new port.colored(color.getColor(left)), new port.colored(color.getColor(right))], [new port.colored(color.getNew())]);
 				return helper.merge([op], left, right);
 				
 			case "Range":
@@ -338,13 +369,12 @@ function irGen() {
 	}
 }
 
-var irGenerator = new irGen();
-
 function sisalir(ast){ // constructs sisal IR from Abstract syntax tree
+	var irGen = new irGenerator();
 	this.nodes=[];
 	for (var i=0;i<ast.length;i++) {
-		this.addNodes(irGenerator.parse(ast[i]));
+		this.addNodes(irGen.parse(ast[i]));
 	}
 }
 
-sisalir.prototype=complexNode;
+sisalir.prototype=node.complex;
