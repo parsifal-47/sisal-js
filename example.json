@@ -103,7 +103,7 @@
             "outPorts": [{
                 "color": 22
             }],
-            "range": {
+            "nodes": [{
                 "type": "rangeGen",
                 "inPorts": [{
                     "id": "A",
@@ -239,9 +239,7 @@
                     "nodeTo": 4,
                     "portTo": 0
                 }]
-            },
-            "body": "",
-            "returns": {
+            }, "", {
                 "type": "loopReturn",
                 "name": "array",
                 "inPorts": [{
@@ -346,7 +344,7 @@
                     "outPorts": [{
                         "color": 22
                     }],
-                    "range": {
+                    "nodes": [{
                         "type": "rangeGen",
                         "inPorts": [{
                             "color": 10
@@ -442,8 +440,7 @@
                             "nodeTo": 1,
                             "portTo": 0
                         }]
-                    },
-                    "body": {
+                    }, {
                         "type": "loopBody",
                         "inPorts": [{
                             "color": 14
@@ -612,8 +609,7 @@
                             "nodeTo": 5,
                             "portTo": 2
                         }]
-                    },
-                    "returns": {
+                    }, {
                         "type": "loopReturn",
                         "name": "sum",
                         "inPorts": [{
@@ -685,8 +681,7 @@
                             "nodeTo": -1,
                             "portTo": 0
                         }]
-                    },
-                    "nodes": [],
+                    }],
                     "edges": []
                 }],
                 "edges": [{
@@ -730,8 +725,7 @@
                     "nodeTo": -1,
                     "portTo": 0
                 }]
-            },
-            "nodes": [],
+            }],
             "edges": []
         }],
         "edges": [{

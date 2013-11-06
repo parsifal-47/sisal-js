@@ -77,10 +77,7 @@ node.forAll = function (range, body, returns, inPorts, outPorts) {
 		this.type = "forall";
 		this.inPorts = inPorts;	
 		this.outPorts = outPorts;
-		this.range = range;
-		this.body = body;
-		this.returns = returns;
-		this.nodes = []; // There are no usual nodes inside forAll node
+		this.nodes = [range, body, returns];
 		this.edges = []; // There are no explicit connections also
 	}
 	
