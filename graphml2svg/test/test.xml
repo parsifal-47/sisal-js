@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalog>
+  <cd>
+    <name>Empire Burlesque</name>
+    <artist>Bob Dylan</artist>
+    <country>USA</country>
+    <company>Columbia</company>
+    <price>10.90</price>
+    <year>1985</year>
+  </cd>
+  <cd>
+    <name>Engines of Creation</name>
+    <artist>Joe Satriani</artist>
+    <country>USA</country>
+    <company>Crystal Planet</company>
+    <price>10.90 </price>
+    <year>2000 </year>
+  </cd>
+</catalog>
