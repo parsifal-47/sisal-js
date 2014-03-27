@@ -255,9 +255,59 @@ function irGenerator() {
 	}
 }
 
+function mockXML() {
+  return '<?xml version="1.0" encoding="UTF-8"?>'+
+'<graphml xmlns="http://graphml.graphdrawing.org/xmlns"'+  
+'      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'+
+'      xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns'+ 
+'        http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">'+
+'  <key id="type" for="node" attr.name="nodetype" attr.type="string" />'+
+'  <key id="subPort" for="node" attr.name="subPort" attr.type="boolean">'+
+'	<default>false</default>'+
+'  </key>'+
+'  <graph id="ir1" edgedefault="directed">'+
+'    <node id="n0">'+
+'      <data key="type">function</data>'+
+'	  <graph id="n0:" edgedefault="directed">'+
+'		<node id="n0::p0">'+
+'			<data key="type">integer</data>'+
+'			<data key="subPort">true</data>'+
+'		</node>'+
+'		<node id="n0::p1">'+
+'			<data key="type">integer</data>'+
+'			<data key="subPort">true</data>'+
+'		</node>'+
+'		<node id="n0::p2">'+
+'			<data key="type">integer</data>'+
+'			<data key="subPort">true</data>'+
+'		</node>'+
+'		<node id="n0::n0">'+
+'			<data key="type">+</data>'+
+'			<port name="left" />'+
+'			<port name="right" />'+
+'			<port name="out" />'+
+'		</node>'+
+'		<node id="n0::n1">'+
+'			<data key="type">*</data>'+
+'			<port name="left" />'+
+'			<port name="right" />'+
+'			<port name="out" />'+
+'		</node>'+
+'		<edge source="n0::p0" target="n0::n0" targetport="left"/>'+
+'		<edge source="n0::p0" target="n0::n1" targetport="right"/>'+
+'		<edge source="n0::p1" target="n0::n1" targetport="left"/>'+
+'		<edge source="n0::n1" target="n0::n0" sourceport="out" targetport="right"/>'+
+'		<edge source="n0::n0" target="p2" sourceport="out"/>'+
+'	  </graph>'+
+ '   </node>'+
+'  </graph>'+
+'</graphml>';
+}
+
 function sisalir(ast){ // constructs sisal IR from Abstract syntax tree
 	var irGen = new irGenerator();
 	this.nodes=[];
+	this.toGraphML = mockXML;
 	for (var i=0;i<ast.length;i++) {
 		this.addNodes(irGen.parse(ast[i]));
 	}
