@@ -1,6 +1,6 @@
 /*
  * Sisal PEG grammar definitions by Idrisov Renat IIS RAS
- * 
+ *
  */
 
 start
@@ -435,13 +435,14 @@ Program
       }
       return result;
     }
-	
+
 SomeDefinition
 	= FunctionImplementation
 	/ FunctionDefinition
 	/ TypeDefinition
-	
-TypeDefinition 
+  / Expression
+
+TypeDefinition
 	= TypeRenaming
 	/ UserDataType
 
@@ -450,15 +451,15 @@ TypeRenaming
 
 UserDataType
 	= name:Identifier __ ":=" __ t:TypeItself {return {type:"UserType", name:name, dtype:t}}
-	
-TypeItself 
+
+TypeItself
 	= Identifier
 	/ TypeToken __ "(" __ e:Expression __ ")" {return {type:"TypeExpression", expression:e}}
 	/ ArrayToken __ "[" __ t:TypeItself __ "]" {return {type:"ArrayOf", dtype:t}}
 
 DataType
 	= TypeItself
-	
+
 TypeList
   = head:TypeItself
     tail:(__ "," __ TypeItself)* {
@@ -506,10 +507,10 @@ FunctionItself
 	= FunctionToken __ "(" __ t:FieldList __ ReturnsToken __ t2:TypeList __ ")" __ exp:ExpressionList __ EndToken __ FunctionToken {return {type: "Function", params:t, returns: t2, expressions:exp}}
 	/ FunctionToken __ "(" __ ReturnsToken __ t2:TypeList __ ")" __ exp:ExpressionList __ EndToken __ FunctionToken {return {type: "Function", params:null, returns: t2, expressions:exp}}
 
- 
+
 /* ===== A.3 Expressions ===== */
 
-Expression 
+Expression
 	= LogicalAndString
 
 LogicalOrStringOperator
@@ -517,8 +518,8 @@ LogicalOrStringOperator
 	/ "|" !"|"
 	/ "^"
 	/ "&"
-	
-LogicalAndString 
+
+LogicalAndString
   = head:Compare
     tail:(__ LogicalOrStringOperator __ Compare)* {
       var result = head;
@@ -540,7 +541,7 @@ CompareOperator
 	/ ">" !"="
 	/ "<="
 	/ ">="
-	
+
 Compare
   = head:Priority1Operation
     tail:(__ CompareOperator __ Priority1Operation)* {
@@ -559,8 +560,8 @@ Compare
 Priority1Operator
 	= "+"
 	/ "-"
-	
-Priority1Operation 
+
+Priority1Operation
   = head:Priority2Operation
     tail:(__ Priority1Operator __ Priority2Operation)* {
       var result = head;
@@ -574,12 +575,12 @@ Priority1Operation
       }
       return result;
     }
-	
+
 Priority2Operator
 	= "*" !"*"
 	/ "/"
 	/ "%"
-	
+
 Priority2Operation
   = head:ToPowerOperation
     tail:(__ Priority2Operator __ ToPowerOperation)* {
@@ -594,7 +595,7 @@ Priority2Operation
       }
       return result;
     }
-	
+
 ToPowerOperation
   = head:UnaryOperation
     tail:(__ "**" __ UnaryOperation)* {
@@ -609,7 +610,7 @@ ToPowerOperation
       }
       return result;
     }
-	
+
 UnaryOperation
 	= "-" __ op:UnaryOperation {return {type:"Unary", operation: "-", operand:op}}
 	/ "+" __ op:UnaryOperation {return {type:"Unary", operation: "+", operand:op}}
@@ -617,17 +618,17 @@ UnaryOperation
 	/ PostfixOperation
 
 PostfixOperation
-	= base:Operand 
+	= base:Operand
 	  args:(
 		 __ "(" __ arguments:FunctionArgumentList? __ ")" { return {type:"()", exp: arguments}; }
 	   / __ "." __ name:IdentifierName    { return name; }
 	   / __ "[" __ expList:ExpressionList __ "]" { return {type:"[]", exp: expList}; }
 	   / __ ReplaceToken __ "{" __ definitions: DefinitionList __ "}"
-	   / __ TagToken __ name:Identifier 
-	   / __ ":" __ ty:DataType	   
+	   / __ TagToken __ name:Identifier
+	   / __ ":" __ ty:DataType
 	  )* {
 		if (args.length==0) return base;
-		
+
 		var result = {
 				type: "Postfix",
 				base: base,
@@ -650,7 +651,7 @@ FunctionArgumentList
       }
       return result;
     }
-	
+
 ExpressionList
   = head:Expression
     tail:(__ "," __ Expression)* {
@@ -684,7 +685,7 @@ Operand
 	/ ErrorToken __ "[" __ ty:DataType __ "]" {return {type:"Error", dtype:ty}}
 
 /* Complex Expressions */
-LetExpression 
+LetExpression
 	= LetToken __ DefinitionList __ InToken __ ExpressionList __ EndToken __ LetToken
 
 DefinitionList
@@ -713,16 +714,16 @@ LValue
 NameAndMaybeType
 	= name:Identifier __ ":" __ ty:DataType {return {id:name, dtype:ty}}
 	/ Identifier
-	
+
 IfExpression
 	= IfToken __ exp:Expression __ ThenToken __ th:ExpressionList __ ElseToken __ el:ExpressionList __ EndToken __ IfToken {return {type:"If", then:th, else:el }}
 
-LoopExpression 
-	= ForToken __ r:RangeGen dl:( __ RepeatToken __ DefinitionList)? __ ReturnsToken __ ret:ReturnExpression __ EndToken __ ForToken 
+LoopExpression
+	= ForToken __ r:RangeGen dl:( __ RepeatToken __ DefinitionList)? __ ReturnsToken __ ret:ReturnExpression __ EndToken __ ForToken
 		{return {type: "For", range:r, body:(dl!==""?dl[3]:""), returns:ret}}
-	/ ForToken __ InitialToken __ init:DefinitionList expr:( __ WhileToken __ Expression)? body:( __ RepeatToken __ DefinitionList )? __ ReturnsToken __ ret:ReturnExpression __ EndToken __ ForToken 
+	/ ForToken __ InitialToken __ init:DefinitionList expr:( __ WhileToken __ Expression)? body:( __ RepeatToken __ DefinitionList )? __ ReturnsToken __ ret:ReturnExpression __ EndToken __ ForToken
 		{return {type: "For", init:init, condition:(expr!==""?expr[3]:""), body:(body!==""?body[3]:""), returns:ret }}
-	/ ForToken __ WhileToken __ expr:Expression body:( __ RepeatToken __ DefinitionList )? __ ReturnsToken __ ret:ReturnExpression __ EndToken __ ForToken 
+	/ ForToken __ WhileToken __ expr:Expression body:( __ RepeatToken __ DefinitionList )? __ ReturnsToken __ ret:ReturnExpression __ EndToken __ ForToken
 		{return {type: "For", init:null, condition:expr, body:(body!==""?body[3]:""), returns:ret }}
 	/ ForToken __ RepeatToken __ body:DefinitionList __ WhileToken __ expr:Expression __ ReturnsToken __ ret:ReturnExpression __ EndToken __ ForToken {return {type: "For", init:null, condition:expr, body:body, returns:ret }}
 
@@ -731,12 +732,12 @@ RangeGen
 
 ForIndexRange
 	= name:Identifier __ InToken __ range:ForIndexRangeTriplet {return {type: "Range", name:name, range:range }}
-	
+
 ForIndexRangeTriplet
 	= exp:Expression exp2:(__ "," __ Expression )? exp3:(__ "," __ Expression )?  { return {type:"RangeTriplet", exp:exp, exp2:exp2 !== "" ? exp2[3] : "", exp3:exp3!==""?exp3[3]:"" }}
 
 ReturnExpression
-	= r:ReductionWithInitial __ OfToken __ el:ExpressionList el2:(__ WhenToken __ ExpressionList )? rt:(__ ";" __ ReturnExpression)? 
+	= r:ReductionWithInitial __ OfToken __ el:ExpressionList el2:(__ WhenToken __ ExpressionList )? rt:(__ ";" __ ReturnExpression)?
 	{ return {type:"Return Expression", reduction:r, expressions:el, whenex: el2!==""?el2[3]:"", retexp:rt!==""?rt[3]:""}}
 
 ReductionWithInitial
@@ -745,7 +746,7 @@ ReductionWithInitial
 ReductionName
 	= Identifier
 	/ ArrayToken
-	/ StreamToken 
+	/ StreamToken
 
 /* ===== A.5 Functions and Programs ===== */
 
