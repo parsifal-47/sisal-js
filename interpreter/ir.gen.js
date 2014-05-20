@@ -7,14 +7,14 @@ var helper = {
 	},
 	merge : function (source, left, right) { // three arrays
 		var merged = source;
-		
+
 		if (helper.isArray(left)) merged = merged.concat(left);
 		else if(!left.fake) merged.push(left);
 
 		if (helper.isArray(right)) merged = merged.concat(right);
 		else if((right) && (!right.fake)) merged.push(right);
-		
-		return merged;	
+
+		return merged;
 	}
 }
 
@@ -47,7 +47,7 @@ function irGenerator() {
 			return new type.array(dtype);
 		}
 	}
-	
+
 	this.parseRangeGen = function (astNode, inputs) { // Range gen is a special case because it contains scatter and dot nodes
 		var nodes = self.parse(astNode, inputs);
 		// add scatter for every range node
@@ -65,11 +65,11 @@ function irGenerator() {
 		self.connectColored(gen);
 		return gen;
 	}
-	
+
 	this.parseComplex = function (astNode, complex, inputs) {
 		if (!astNode) return "";
 
-		if (helper.isArray(astNode)) {			
+		if (helper.isArray(astNode)) {
 			for (var i=0;i<astNode.length;i++) {
 				var nodes=self.parse(astNode[i], inputs);
 				complex.outPorts.push(new port.colored(color.getColor(nodes)));
@@ -80,17 +80,17 @@ function irGenerator() {
 			return complex;
 		} else {
 			throw "Unexpected kind of complex node"
-		}		
+		}
 	}
-	
-	this.parseBody = function (astNode, inputs) { // Body is special case, it conatins self-created ports as "old" values		
+
+	this.parseBody = function (astNode, inputs) { // Body is special case, it conatins self-created ports as "old" values
 		return self.parseComplex(astNode, new node.loopBody(inputs, []), inputs);
 	}
 
 	this.parseReturns = function (astNode, inputs) {
 		return self.parseComplex(astNode.expressions, new node.loopReturn(astNode.reduction.name, inputs, []), inputs);
 	}
-	
+
 	this.parse = function (astNode, inputs, undefined) {
 		if (helper.isArray(astNode)) { // Parse as array of parsed instances
 			var first=self.parse(astNode[0], inputs);
@@ -110,20 +110,20 @@ function irGenerator() {
 		switch (astNode.type) {
 			case "NumericLiteral":
 				return new node.constant(astNode.value, color.getNew());
-				
+
 			case "Function":
 				var fInputs=self.parseType(astNode.params);
 				var fOutputs=self.parseType(astNode.returns);
 				// Create SubNodes
-				
+
 				if (astNode.expressions.length!==fOutputs.length) {
 					throw "Defined and implemented output mismatch for the function " + astNode.name;
 				}
-				
+
 				color.assign(fInputs);
 
 				var func=new node.func(astNode.name, fInputs, fOutputs);
-				
+
 				for (var i=0;i<astNode.expressions.length;i++) {
 					var nodes=self.parse(astNode.expressions[i], fInputs);
 					fOutputs[i].color = color.getColor(nodes);
@@ -139,15 +139,15 @@ function irGenerator() {
 				var body = self.parseBody(astNode.body, helper.merge(range.outPorts, inputs));
 				var returns = self.parseReturns(astNode.returns, helper.merge( (body ? body.outPorts : []), range.outPorts, inputs));
 				return new node.forAll(range, body, returns, inputs, [new port.colored(color.getColor(returns))]);
-				
+
 			case "BinaryExpression":
 				var left = self.parse(astNode.left, inputs);
 				var right = self.parse(astNode.right, inputs);
-				var op = new node.binary(astNode.operator, 
+				var op = new node.binary(astNode.operator,
 					[new port.colored(color.getColor(left)), new port.colored(color.getColor(right))], [new port.colored(color.getNew())]);
-					
+
 				return helper.merge([op], left, right);
-				
+
 			case "cross":
 				return helper.merge([], self.parse(astNode.left, inputs), self.parse(astNode.right, inputs));
 
@@ -158,24 +158,24 @@ function irGenerator() {
 				var op = new node.range(
 					[new port.colored(color.getColor(left)), new port.colored(color.getColor(right))], [new port.colored(color.getNew())]);
 				return helper.merge([op], left, right);
-				
+
 			case "Range":
 				var range = self.parse(astNode.range, inputs);
-				range[0].outPorts[0].name = astNode.name; //out port comes first that's why zero 
+				range[0].outPorts[0].name = astNode.name; //out port comes first that's why zero
 				// TODO: fix 0
 				return range;
-				
+
 			case "Definition":
 				var def = self.parse(astNode.right, inputs);
 				def[0].outPorts[0].name = astNode.left[0]; //out port comes first that's why zero
 				// TODO: fix 0
 				return def;
-				
+
 			case "Postfix":
 				var base = self.parse(astNode.base, inputs);
 				var nodes = [];
 				var current, prev = null;
-				
+
 				for (var i = astNode.opList.length-1; i>=0; i--) {
 					current = self.parse(astNode.opList[i], inputs);
 					nodes = helper.merge(nodes, current);
@@ -187,7 +187,7 @@ function irGenerator() {
 				current[0].inPorts[0].color = color.getColor(base);
 				nodes.push(base);
 				return nodes;
-				
+
 			case "[]":
 				var nodes = [new node.element([new port.empty()], [new port.colored(color.getNew())])];
 				var current;
@@ -200,7 +200,7 @@ function irGenerator() {
 			default: throw "Unexpected node type: " + astNode.type;
 		}
 	}
-	
+
 	this.connectColored = function (cNode) { // input is a complex node
 		if (helper.isArray(cNode.inPorts) && helper.isArray(cNode.nodes)) {
 			for (var i = 0; i < cNode.inPorts.length; i++) {
@@ -235,11 +235,11 @@ function irGenerator() {
 					}
 				}
 			}
-		}		
+		}
 		if (helper.isArray(cNode.nodes)) {
 			for (var l = 0; l < cNode.nodes.length; l++) {
 				if (!helper.isArray(cNode.nodes[l].outPorts)) continue;
-				
+
 				for (var i = 0; i < cNode.nodes[l].outPorts.length; i++) {
 					if (!cNode.nodes[l].outPorts[i].color) continue;
 					for (var j = 0; j< cNode.nodes.length; j++) {
@@ -257,9 +257,9 @@ function irGenerator() {
 
 function mockXML() {
   return '<?xml version="1.0" encoding="UTF-8"?>'+
-'<graphml xmlns="http://graphml.graphdrawing.org/xmlns"'+  
+'<graphml xmlns="http://graphml.graphdrawing.org/xmlns"'+
 '      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'+
-'      xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns'+ 
+'      xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns'+
 '        http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">'+
 '  <key id="type" for="node" attr.name="nodetype" attr.type="string" />'+
 '  <key id="subPort" for="node" attr.name="subPort" attr.type="boolean">'+
@@ -306,11 +306,19 @@ function mockXML() {
 
 function sisalir(ast){ // constructs sisal IR from Abstract syntax tree
 	var irGen = new irGenerator();
+  var self = this;
 	this.nodes=[];
 	this.toGraphML = mockXML;
 	for (var i=0;i<ast.length;i++) {
 		this.addNodes(irGen.parse(ast[i]));
 	}
+  this.execute = function () {
+    var result = [];
+    for (var i=0; i<nodes.length; i++) {
+      if (nodes[i].execute) result.push(nodes[i].execute());
+    }
+    return result;
+  }
 }
 
 sisalir.prototype=node.complex;
