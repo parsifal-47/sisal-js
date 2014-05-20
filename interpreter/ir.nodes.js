@@ -117,11 +117,13 @@ node.identifier = function (id, color) { // port with name
 	}
 
 node.constant = function (value, color) { // port with name
+    var self = this;
 		this.type = "constant";
 		this.inPorts = [];
 		this.outPorts = [new port.colored(color)];
 		this.value = value;
 		this.color = color;
+    this.execute = function () {return self.value;}
 	}
 
 node.fake = function (color) {
