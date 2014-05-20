@@ -108,7 +108,7 @@ node.scatter = function (inPort, outPort) {
 		this.outPorts = [outPort];
 	}
 
-node.identifier = function Node(id, color) { // port with name
+node.identifier = function (id, color) { // port with name
 		this.type = "id";
 		this.inPorts = [];
 		this.outPorts = [new port.colored(color)];
