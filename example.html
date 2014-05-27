@@ -6,6 +6,9 @@
 	<script src="interpreter/ir.nodes.js" ></script>	
 	<script src="interpreter/ir.other.js" ></script>	
 	<script src="interpreter/ir.gen.js" ></script>	
+
+	<script src="graphml2svg/js/xslt.js" ></script>	
+
 	<title>Parser</title>
 </head>
 
@@ -22,6 +25,22 @@ console.log(ast);
 ir= new sisalir(ast);
 console.log(ir);
 console.log(ir.toGraphML());
+document.getElementById('visBtn').style.display = '';
+}
+function vis() {
+xsl = XsltTransform.getXMLFromUrl('graphml2svg/graphml2svg.xsl');
+xml2 = '<graphml>' + ir.toGraphML().substring(453);
+xml = XsltTransform.getXMLFromString(xml2);
+svgimg = XsltTransform.transformXslt(xml, xsl);
+
+var node = document.getElementById("visimg");
+if(!node) {
+    var d = document.createElement('div');
+    d.id = 'visimg';
+    document.body.appendChild(d);
+    node = document.getElementById('visimg');
+}
+node.innerHTML = svgimg;
 }
 </script>
 <textarea id=source rows=12 cols=80>
@@ -35,6 +54,7 @@ function Main2( M,N : integer returns integer )
 end function
 -->
 <p><button onclick='trn();'>translate (result in console log)</button></p>
+<p><button onclick='vis();' id='visBtn' style='display:none;'>vis (result in console log)</button></p>
 
 Another example:
 <pre>
