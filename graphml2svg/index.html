@@ -59,6 +59,15 @@
 
         function bufferize(str) {
             var node = document.getElementById("buffer");
+
+            if(!node) {
+                var b = document.createElement('input');
+                b.type = 'hidden';
+                b.id = 'buffer';
+                document.body.appendChild(b);
+                node = document.getElementById("buffer");
+            }
+
             node.value = str;
             return node.value;
         }

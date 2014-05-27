@@ -86,7 +86,9 @@
         <xsl:attribute name="class">
           <xsl:text>edge</xsl:text>
         </xsl:attribute>
-        <xsl:attribute name="d" />
+        <xsl:attribute name="d">
+          <xsl:text>M 10 10 l 50 50 l 100 0</xsl:text>
+        </xsl:attribute>
       </xsl:element>
     </xsl:for-each>
   </xsl:template>
@@ -159,8 +161,8 @@
       ]]>
       </style>
 
-      <marker id="arrow" viewBox="0 0 10 10" refX="20" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto">
-        <path d="M 0 0 L 10 5 L 0 10 z"/>
+      <marker id="arrow" viewBox="0 0 40 10" refX="40" refY="10" markerUnits="strokeWidth" markerWidth="10" markerHeight="10" stroke="black" stroke-width="4" orient="auto">
+        <path d="M 0 0 L 40 10 L 0 20 z"/>
       </marker>
 
     </defs>
