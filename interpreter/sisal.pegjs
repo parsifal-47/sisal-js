@@ -507,7 +507,13 @@ FunctionItself
 	= FunctionToken __ "(" __ t:FieldList __ ReturnsToken __ t2:TypeList __ ")" __ exp:ExpressionList __ EndToken __ FunctionToken {return {type: "Function", params:t, returns: t2, expressions:exp}}
 	/ FunctionToken __ "(" __ ReturnsToken __ t2:TypeList __ ")" __ exp:ExpressionList __ EndToken __ FunctionToken {return {type: "Function", params:null, returns: t2, expressions:exp}}
 
+/* support only simple [1! 2, 3, 4] [2, 3, 4] array descriptions first
+it would be good to support compartible Sisal 2.0 array definitions like [1; 2, 3, 4], [1..3; 2,3,4]
++ array comprehensions
+*/
 
+ArrayItself
+  = (ArrayToken __ "[" __ t:DataType __ "]" __)? "[" (__ Expression:startIndex __ "!")? ExpressionList:contents "]"
 /* ===== A.3 Expressions ===== */
 
 Expression
@@ -675,8 +681,8 @@ Operand
 	/ WhereExpression*/
 	/ LoopExpression
 	/ FunctionItself
-/*	/ ArrayItself
-	/ StreamItself
+	/ ArrayItself
+/*	/ StreamItself
 	/ RecordItself
 	/ UnionItself*/
 	/ IsToken __ ErrorToken __ "(" __ expr:Expression __ ")" {return {type:"Is error", expression:expr }}
