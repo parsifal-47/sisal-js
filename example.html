@@ -8,6 +8,7 @@
 	<script src="interpreter/ir.gen.js" ></script>	
 
 	<script src="graphml2svg/js/xslt.js" ></script>	
+        <script src="graphml2svg/js/layout.js" ></script>	
 
 	<title>Parser</title>
 </head>
@@ -29,18 +30,13 @@ document.getElementById('visBtn').style.display = '';
 }
 function vis() {
 xsl = XsltTransform.getXMLFromUrl('graphml2svg/graphml2svg.xsl');
-xml2 = '<graphml>' + ir.toGraphML().substring(453);
-xml = XsltTransform.getXMLFromString(xml2);
-svgimg = XsltTransform.transformXslt(xml, xsl);
+Layout.prepareGraphML(ir.toGraphML(), function(xml){
+    svgimg = XsltTransform.transformXslt(xml, xsl);
+    var node = Layout.getVisNode();
+    node.innerHTML = svgimg;
+});
 
-var node = document.getElementById("visimg");
-if(!node) {
-    var d = document.createElement('div');
-    d.id = 'visimg';
-    document.body.appendChild(d);
-    node = document.getElementById('visimg');
-}
-node.innerHTML = svgimg;
+
 }
 </script>
 <textarea id=source rows=12 cols=80>
