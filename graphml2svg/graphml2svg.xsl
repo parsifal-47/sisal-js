@@ -44,14 +44,24 @@
           <xsl:attribute name="id">
             <xsl:value-of select="@id"/>
           </xsl:attribute>
-          <xsl:attribute name="cx" />
-          <xsl:attribute name="cy" />
+          <xsl:attribute name="cx">
+            <xsl:value-of select="@cx"/>
+          </xsl:attribute>
+          <xsl:attribute name="cy">
+            <xsl:value-of select="@cy"/>
+          </xsl:attribute>
         </circle>
       </xsl:when>
       <xsl:otherwise>
         <svg>
           <xsl:attribute name="id">
             <xsl:value-of select="@id"/>
+          </xsl:attribute>
+          <xsl:attribute name="x">
+            <xsl:value-of select="@xx"/>
+          </xsl:attribute>
+          <xsl:attribute name="y">
+            <xsl:value-of select="@yy"/>
           </xsl:attribute>
           <xsl:attribute name="class">
             <xsl:text>vertex </xsl:text>
@@ -64,9 +74,49 @@
               </xsl:otherwise>
             </xsl:choose>
           </xsl:attribute>
-          <rect x="3" y="3" class="vertex-bg" height="40" width="40" />
-          <xsl:for-each select="$vertex/port">
-            <circle cx="33" cy="3" r="2" class="port" />
+          <xsl:choose>
+            <xsl:when test="$vertex/graph">
+              <rect x="3" y="3" class="vertex-bg" height="300" width="300" />
+            </xsl:when>
+            <xsl:otherwise>
+              <rect x="3" y="3" class="vertex-bg" height="40" width="40" />
+            </xsl:otherwise>
+          </xsl:choose>
+          <xsl:variable name="iPorts" select="$vertex/port[@name!='out']" />
+          <xsl:for-each select="$iPorts">
+            <xsl:variable name="iCount" select="count($iPorts)+1" />
+            <circle>
+              <xsl:attribute name="cx">
+                <xsl:value-of select="position()*(40 div $iCount)"/>
+              </xsl:attribute>  
+              <xsl:attribute name="cy">
+                <xsl:text>3</xsl:text>
+              </xsl:attribute>  
+              <xsl:attribute name="r">
+                <xsl:text>2</xsl:text>
+              </xsl:attribute>  
+              <xsl:attribute name="class">
+                <xsl:text>port</xsl:text>
+              </xsl:attribute>  
+            </circle>
+          </xsl:for-each>
+          <xsl:variable name="oPorts" select="$vertex/port[@name='out']" />
+          <xsl:for-each select="$oPorts">
+            <xsl:variable name="oCount" select="count($oPorts)+1" />
+            <circle>
+              <xsl:attribute name="cx">
+                <xsl:value-of select="position()*(40 div $oCount)"/>
+              </xsl:attribute>  
+              <xsl:attribute name="cy">
+                <xsl:text>43</xsl:text>
+              </xsl:attribute>  
+              <xsl:attribute name="r">
+                <xsl:text>2</xsl:text>
+              </xsl:attribute>  
+              <xsl:attribute name="class">
+                <xsl:text>port</xsl:text>
+              </xsl:attribute>  
+            </circle>
           </xsl:for-each>
           <xsl:if test="$vertex/graph">
             <xsl:call-template name="perform_graph">
@@ -87,7 +137,7 @@
           <xsl:text>edge</xsl:text>
         </xsl:attribute>
         <xsl:attribute name="d">
-          <xsl:text>M 10 10 l 50 50 l 100 0</xsl:text>
+          <xsl:value-of select="@path" />
         </xsl:attribute>
       </xsl:element>
     </xsl:for-each>
