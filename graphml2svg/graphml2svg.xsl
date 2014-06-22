@@ -47,9 +47,11 @@
   <xsl:template name="perform_graph">
     <xsl:param name="pGraph" />
     <xsl:param name="isRoot" />
+    <xsl:param name="parentNode" />
     <xsl:for-each select="$pGraph/node">
       <xsl:call-template name="perform_node">
         <xsl:with-param name="vertex" select="."/>
+        <xsl:with-param name="parentVertex" select="$parentNode"/>
       </xsl:call-template>
     </xsl:for-each>
     <xsl:for-each select="$pGraph/edge">
@@ -61,6 +63,8 @@
 
   <xsl:template name="perform_node">
     <xsl:param name="vertex" />
+    <xsl:param name="parentVertex" />
+    <xsl:variable name="parentVertexHeight" select="300" />
     <xsl:choose>
       <xsl:when test="$vertex/data/@key = 'subPort'">
         <circle class="subport">
@@ -73,9 +77,19 @@
           <xsl:attribute name="cx">
             <xsl:value-of select="@cx"/>
           </xsl:attribute>
-          <xsl:attribute name="cy">
-            <xsl:value-of select="@cy"/>
-          </xsl:attribute>
+          <xsl:choose>
+            <xsl:when test="$vertex/data/@key = 'output'">
+              <xsl:attribute name="cy">
+                <xsl:value-of select="$parentVertexHeight + $zeroLevelPhase"/>
+              </xsl:attribute>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:attribute name="cy">
+                <xsl:value-of select="$zeroLevelPhase"/>
+              </xsl:attribute>
+            </xsl:otherwise>
+          </xsl:choose>
+          
         </circle>
       </xsl:when>
       <xsl:otherwise>
@@ -130,6 +144,19 @@
             </xsl:choose>
           </rect>
 
+          <text>
+            <xsl:attribute name="x">
+              <xsl:value-of select="$collapsedNodeWidth div 2"/>
+            </xsl:attribute>
+            <xsl:attribute name="y">
+              <xsl:value-of select="$collapsedNodeHeight div 2"/>
+            </xsl:attribute>
+            <xsl:variable name="types" select="$vertex/data[@key='type']" />
+            <xsl:for-each select="$types">
+              <xsl:value-of select="."/>
+            </xsl:for-each>
+          </text>
+          
           <xsl:variable name="nodeWidth">
             <xsl:choose>
               <xsl:when test="$vertex/@width">
@@ -155,7 +182,7 @@
             <xsl:variable name="iCount" select="count($iPorts)+1" />
             <circle>
               <xsl:attribute name="cx">
-                <xsl:value-of select="position()*($nodeWidth div $iCount)"/>
+                <xsl:value-of select="position()*($nodeWidth div $iCount) + $zeroLevelPhase"/>
               </xsl:attribute>
               <xsl:attribute name="cy">
                 <xsl:value-of select="$zeroLevelPhase"/>
@@ -173,7 +200,7 @@
             <xsl:variable name="oCount" select="count($oPorts)+1" />
             <circle>
               <xsl:attribute name="cx">
-                <xsl:value-of select="position()*($nodeWidth div $oCount)"/>
+                <xsl:value-of select="position()*($nodeWidth div $oCount) + $zeroLevelPhase"/>
               </xsl:attribute>
               <xsl:attribute name="cy">
                 <xsl:value-of select="$nodeHeight + $zeroLevelPhase"/>
@@ -189,7 +216,8 @@
           <xsl:if test="$vertex/graph">
             <xsl:call-template name="perform_graph">
               <xsl:with-param name="pGraph" select="$vertex/graph" />
-              <xsl:with-param name="isRoot" select="'false'"></xsl:with-param>
+              <xsl:with-param name="isRoot" select="'false'" />
+              <xsl:with-param name="parentNode" select="$vertex" />
             </xsl:call-template>
           </xsl:if>
         </svg>
