@@ -30,8 +30,13 @@ document.getElementById('visBtn').style.display = '';
 }
 function vis() {
 xsl = XsltTransform.getXMLFromUrl('graphml2svg/graphml2svg.xsl');
-Layout.prepareGraphML(ir.toGraphML(), function(xml){
-    svgimg = XsltTransform.transformXslt(xml, xsl);
+Layout.prepareGraphML(ir.toGraphML(), function(xml) {
+    svgimg = XsltTransform.transformXslt(xml, xsl, {
+        canvasWidth: '400',
+        canvasHeight: '400',
+        collapsedNodeWidth: '42',
+        collapsedNodeHeight: '42'
+    });
     var node = Layout.getVisNode();
     node.innerHTML = svgimg;
 });
@@ -39,7 +44,7 @@ Layout.prepareGraphML(ir.toGraphML(), function(xml){
 
 }
 </script>
-<textarea id=source rows=12 cols=80>
+<textarea id="source" rows="12" cols="80">
 function Main2( M,N : integer returns integer )
 	M+N*M
 end function
