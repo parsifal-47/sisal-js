@@ -4,17 +4,46 @@
 
         window.XsltTransform = (function() {
             return {
-                transformXslt: function(source, style) {
+                transformXslt: function(source, style, options) {
                     if (!source || !style) {
                         alert('null param');
                         return;
                     }
 
-                    if (window.ActiveXObject) {
-                        return source.transformNode(style);
+                    if (window.ActiveXObject) {  
+                        /*return source.transformNode(style);*/
+                        var xslt = new ActiveXObject("Msxml2.XSLTemplate.6.0");
+                        var xsldoc = new ActiveXObject("Msxml2.FreeThreadedDOMDocument.6.0");
+                        var xslproc;
+                        xsldoc.async = false;
+                        xsldoc.load(style);
+                        if (xsldoc.parseError.errorCode != 0) {
+                            var myErr = xsldoc.parseError;
+                            alert("You have error " + myErr.reason);
+                        } else {
+                            xslt.stylesheet = xsldoc;
+                            var xmldoc = new ActiveXObject("Msxml2.DOMDocument.6.0");
+                            xmldoc.async = false;
+                            xmldoc.load(source);
+                            if (xmldoc.parseError.errorCode != 0) {
+                                var myErr = xmldoc.parseError;
+                                alert("You have error " + myErr.reason);
+                            } else {
+                                xslproc = xslt.createProcessor();
+                                xslproc.input = xmldoc;
+                                for (var p in options) {
+                                    xslproc.addParameter(p, options[p]);
+                                }
+                                xslproc.transform();
+                                return xslproc.output;
+                            }
+                        }
                     }
                     else if (window.XSLTProcessor) {
                         var xsltProcessor = new XSLTProcessor();
+                        for(var p in options){
+                            xsltProcessor.setParameter(null, p, options[p]);
+                        }
                         xsltProcessor.importStylesheet(style);
                         var resultDocument = xsltProcessor.transformToDocument(source);
                         var xmls = new XMLSerializer();
