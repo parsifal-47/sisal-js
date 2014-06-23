@@ -10,7 +10,7 @@
                     fixedXml = 
                       
                     '<graphml><graph id="ir1" edgedefault="directed" width="400" height="400">' +
-                      '<node id="n0" xx="10" yy="10" width="300" heigth="300">' +      
+                      '<node id="n0" xx="50" yy="50" width="300" heigth="300">' +      
                         '<data key="type">function</data>' +	  
                         '<graph id="n0:" edgedefault="directed">' +		
                           '<node id="n0::p0" cx="100">' +	
