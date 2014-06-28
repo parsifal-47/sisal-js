@@ -5,16 +5,16 @@
         window.Layout = (function () {
 
             return {
-                prepareGraphML: function (xml, fn) {
+                prepareGraphML: function(xml, json, fn) {
                     var fixedXml = '<graphml>' + xml.substring(453);
 
                     fixedXml =
 
                     '<graphml><graph id="ir1" edgedefault="directed" width="400" height="400">' +
-                      '<node id="n0" xx="50" yy="50" width="300" heigth="300">' +
-                        '<data key="type">function</data>' +
-                        '<graph id="n0:" edgedefault="directed">' +
-                          '<node id="n0::p0" cx="100">' +
+                      '<node id="n0" xx="50" yy="50" width="300" heigth="300">' +      
+                        '<data key="type">function</data>' +	  
+                        '<graph id="n0:" edgedefault="directed">' +		
+                          '<node id="n0::p0" cx="100">' +	
                             '<data key="type">integer</data>' +
                             '<data key="subPort">true</data>' +
                           '</node>' +
