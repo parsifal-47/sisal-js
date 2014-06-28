@@ -30,7 +30,7 @@ document.getElementById('visBtn').style.display = '';
 }
 function vis() {
 xsl = XsltTransform.getXMLFromUrl('graphml2svg/graphml2svg.xsl');
-Layout.prepareGraphML(ir.toGraphML(), function(xml) {
+Layout.prepareGraphML(ir.toGraphML(), ir, function(xml) {
     svgimg = XsltTransform.transformXslt(xml, xsl, {
         canvasWidth: '400',
         canvasHeight: '400',
