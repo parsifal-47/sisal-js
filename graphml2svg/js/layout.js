@@ -10,7 +10,7 @@
                 prepareGraphML: function(xml, json, fn) {
                     var fixedXml = '<graphml>' + xml.substring(453);
 
-                    fixedXml =
+                    var fixedXml2 =
 
                     '<graphml><graph id="ir1" edgedefault="directed" width="400" height="400">' +
                       '<node id="n0" xx="50" yy="50" width="300" height="300">' +
@@ -52,8 +52,6 @@
 
                     var xml = XsltTransform.getXMLFromString(fixedXml);
 
-                    console.log(xml);
-
                     this.doLayout(xml, fn);
 
                     console.log(xml);
@@ -77,8 +75,9 @@
                                 if (child.childNodes[j].tagName == 'graph') {
                                     var json = this.convertGraphMLToJson(child.childNodes[j]);
                                     this.doSingleLayout(json, function(layed) {
-                                        Layout.convertJsonToGraphML(gml, layed);
-                                        fn(gml);
+                                        if (true == Layout.convertJsonToGraphML(gml, layed)) {
+                                            fn(gml);
+                                        }
                                     });
                                     break;
                                 }
@@ -110,20 +109,27 @@
 
                     return gr;
                 },
-                convertJsonToGraphML: function(gml, layed) {
-                    var l = JSON.parse(layed.DoResult.data);
-                    var list = this.makePlainList(l);
+                convertJsonToGraphML: function (gml, layed) {
+                    if (layed.DoResult.success == true) {
+                        var l = JSON.parse(layed.DoResult.data);
+                        var list = this.makePlainList(l);
 
-                    for (var i = 0; i < gml.childNodes.length; i++) {
-                        var child = gml.childNodes[i];
-                        if (child.tagName == 'graphml') {
-                            for (var j = 0; j < child.childNodes.length; j++) {
-                                if (child.childNodes[j].tagName == 'graph') {
-                                    this.walkThroughGraphML(child.childNodes[j], list);
-                                    break;
+                        for (var i = 0; i < gml.childNodes.length; i++) {
+                            var child = gml.childNodes[i];
+                            if (child.tagName == 'graphml') {
+                                for (var j = 0; j < child.childNodes.length; j++) {
+                                    if (child.childNodes[j].tagName == 'graph') {
+                                        this.walkThroughGraphML(child.childNodes[j], list);
+                                        break;
+                                    }
                                 }
                             }
                         }
+                        return true;
+                    }
+                    else {
+                        console.error(layed.DoResult.data);
+                        return false;
                     }
                 },
                 walkThroughGraphML: function(g, data) {
@@ -184,8 +190,8 @@
                 doExternalCall: function(g, fn) {
                     var d = JSON.stringify(g);
 
-                    var url = 'http://paul.iis.nsk.su/layout/Layout.svc/layout';
-                    //var url = 'http://localhost:16302/Layout.svc/layout';
+                    //var url = 'http://paul.iis.nsk.su/layout/Layout.svc/layout';
+                    var url = 'http://localhost:16302/Layout.svc/layout';
 
                     cache.fn = fn;
 

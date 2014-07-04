@@ -297,7 +297,7 @@ function mockXML() {
 '		<edge source="n0::p0" target="n0::n1" targetport="right"/>'+
 '		<edge source="n0::p1" target="n0::n1" targetport="left"/>'+
 '		<edge source="n0::n1" target="n0::n0" sourceport="out" targetport="right"/>'+
-'		<edge source="n0::n0" target="p2" sourceport="out"/>'+
+'		<edge source="n0::n0" target="n0::p2" sourceport="out"/>'+
 '	  </graph>'+
  '   </node>'+
 '  </graph>'+
