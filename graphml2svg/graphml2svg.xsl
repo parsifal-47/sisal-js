@@ -64,7 +64,6 @@
   <xsl:template name="perform_node">
     <xsl:param name="vertex" />
     <xsl:param name="parentVertex" />
-    <xsl:variable name="parentVertexHeight" select="300" />
     <xsl:choose>
       <xsl:when test="$vertex/data/@key = 'subPort'">
         <circle class="subport">
@@ -79,6 +78,7 @@
           </xsl:attribute>
           <xsl:choose>
             <xsl:when test="$vertex/data/@key = 'output'">
+              <xsl:variable name="parentVertexHeight" select="$parentVertex/@height" />
               <xsl:attribute name="cy">
                 <xsl:value-of select="$parentVertexHeight + $zeroLevelPhase"/>
               </xsl:attribute>
@@ -130,7 +130,10 @@
                   <xsl:value-of select="$vertex/@width"/>
                 </xsl:attribute>
                 <xsl:attribute name="height">
-                  <xsl:value-of select="$vertex/@heigth"/>
+                  <xsl:value-of select="$vertex/@height"/>
+                </xsl:attribute>
+                <xsl:attribute name="height">
+                  <xsl:value-of select="$vertex/@height"/>
                 </xsl:attribute>
               </xsl:when>
               <xsl:otherwise>
