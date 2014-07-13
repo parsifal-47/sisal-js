@@ -279,7 +279,8 @@ function mockXML() {
 '		</node>'+
 '		<node id="n0::p2">'+
 '			<data key="type">integer</data>'+
-'			<data key="subPort">true</data>'+
+'			<data key="subPort">true</data>' +
+'           <data key="output">true</data>'+
 '		</node>'+
 '		<node id="n0::n0">'+
 '			<data key="type">+</data>'+

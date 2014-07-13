@@ -80,7 +80,7 @@
             <xsl:when test="$vertex/data/@key = 'output'">
               <xsl:variable name="parentVertexHeight" select="$parentVertex/@height" />
               <xsl:attribute name="cy">
-                <xsl:value-of select="$parentVertexHeight + $zeroLevelPhase"/>
+                <xsl:value-of select="@cy + $zeroLevelPhase"/>
               </xsl:attribute>
             </xsl:when>
             <xsl:otherwise>
