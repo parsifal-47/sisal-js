@@ -26,11 +26,11 @@
                           '</node>' +
                           '<node id="n0::p2" cx="150">' +
                             '<data key="type">integer</data>' +
-   			    '<data key="subPort">true</data>' +
-   			    '<data key="output">true</data>' +
+   			                '<data key="subPort">true</data>' +
+   			                '<data key="output">true</data>' +
                           '</node>' +
                           '<node id="n0::n0" xx="100" yy="100">' +
-       			    '<data key="type">+</data>' +
+       			            '<data key="type">+</data>' +
                             '<port name="left"  />' +
                             '<port name="right" />' +
                             '<port name="out" />' +
@@ -190,8 +190,8 @@
                 doExternalCall: function(g, fn) {
                     var d = JSON.stringify(g);
 
-                    //var url = 'http://paul.iis.nsk.su/layout/Layout.svc/layout';
-                    var url = 'http://localhost:16302/Layout.svc/layout';
+                    var url = 'http://paul.iis.nsk.su/layout/Layout.svc/layout';
+                    //var url = 'http://localhost:16302/Layout.svc/layout';
 
                     cache.fn = fn;
 
