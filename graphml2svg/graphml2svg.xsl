@@ -20,8 +20,8 @@
       </xsl:attribute>
       <xsl:call-template name="definitions" />
       <xsl:for-each select="./graph">
-        <xsl:variable name="graphWidth" select="./@width"/>
-        <xsl:variable name="graphHeight" select="./@height"/>
+        <xsl:variable name="graphWidth" select="'100%'"/>
+        <xsl:variable name="graphHeight" select="'100%'"/>
         <xsl:if test="position()=1">
           <svg x="0" y="0" class="ir1">
             <xsl:attribute name="id">
@@ -250,7 +250,7 @@
         {
 	        stroke: green; 
 	        fill: #AAAAAA;
-	        stroke-width: 5px;  
+	        stroke-width: 5px; 
 	      }
 
 	      svg.vertex.collapsed > rect.vertex-bg
