@@ -1,0 +1,3 @@
+function main (i: integer returns array[character], integer)
+  "The input value squared is", i*i
+end function

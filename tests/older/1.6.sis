@@ -1,0 +1,32 @@
+function void(returns null)
+
+x1 * y1 + x2 * y2 = (x1 * y1) + (x2 * y2),
+x + y + z = (x + y) + z,
+x ** -y = x ** (-y),
+i + j mod 4 = i + (j mod 4),
+x / y / z = (x / y) / z,
+y ** x ** 2 = y ** (x ** 2)
+
+(i < j < k) = ((i < j) & (j < k)),
+(i = j = k) = ((i = j) & (j = k)),
+(0 < i = j <= 99) = ((0 < i) & (i = j) & (j <= 99))
+
+b1 | ~b2 & b3 = b1 | ((~b2) & b3),
+b1 | b2 & b3 | b4 = (b1 | (b2 & b3)) | b4,
+b1 & b2 & b3 = (b1 & b2) & b3
+
+(b ~= 0 & a/b > 0)
+
+error[boolean] & false = false
+error[boolean] | true = true
+
+str || "\n" % конкатенация
+str[i]  % извлечение символа
+str[i:j]  % извлечение подстроки
+
+let c := 'a'
+in array[c], % строка "a"
+  ['b'] % строка "b"
+end let
+
+end function % void

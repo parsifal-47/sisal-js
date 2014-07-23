@@ -1,0 +1,16 @@
+function void(returns null)
+
+type_of_home := case pet
+  of "fish" then "bowl"
+  of "cat", "dog" then "house"
+  of "mouse", "hamster", "bird" then "cage"
+  else "n/a"
+end case
+
+first_roll := case die_1 + die_2
+  of 2:3, 12   then "lose"
+  of 7, 11     then "win"
+  of 4:6, 8:10 then "no decision"
+end case
+
+end function % void

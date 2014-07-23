@@ -1,0 +1,7 @@
+function void(returns null)
+
+liml(A) % нижняя граница массива А
+limh(A) % верхняя граница массива А
+size(A) % число элементов в массиве А
+
+end function % void

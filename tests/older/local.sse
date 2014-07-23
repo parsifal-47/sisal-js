@@ -1,0 +1,14 @@
+% local and "partial" functions
+
+function sum(a,b: integer returns integer)
+ a+b
+end function
+
+function main(returns integer)
+  let plus8 := sum(_,8)
+      mul := function(a:integer; b:integer returns integer)
+             a*b
+             end function
+  in plus8(mul(1,2))
+  end let
+end function

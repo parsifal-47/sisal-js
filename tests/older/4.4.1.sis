@@ -1,0 +1,6 @@
+function void(returns null)
+
+U1 := union scalar_numeric[i ! 10];
+U2 := scalar_numeric{i ! 10}
+
+end function % void

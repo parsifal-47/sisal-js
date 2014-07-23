@@ -1,0 +1,4 @@
+function main(returns real, double)
+  1e-1,
+  1d-1
+end function

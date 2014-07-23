@@ -1,0 +1,13 @@
+definition main
+
+function main(A:array[array[integer]]  returns integer)
+   let
+      s := 0
+   in
+      for i in 1, 100 cross j in 1, 100
+      repeat
+         s := old s + A[i, j]
+      returns value of s
+      end for
+   end let
+end function

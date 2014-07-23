@@ -1,0 +1,10 @@
+global function goo(integer, integer returns integer)
+global function integer_divide(integer, integer returns integer, integer)
+
+function main(returns integer)
+  let
+    foo := goo(_, 3)
+    a, _ := integer_divide(5, 3)
+  in foo(a)
+  end let
+end function % main

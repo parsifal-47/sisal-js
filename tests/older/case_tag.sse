@@ -1,0 +1,11 @@
+% case_tag example
+
+type scalar_numeric = union[i:integer; r:real; d:double];
+
+function main(returns integer)
+  case tag scalar_numeric{i!11}
+    of i then 1
+    of r then 2
+    of d then 3
+  end case
+end function

@@ -1,0 +1,7 @@
+type OneParm = function[real returns real];
+type TwoParm = function[real, real returns real];
+
+function integrate(n: integer; a, b: real; f: OneParm
+  returns real)
+  F: OneParm := foo(_, 3.0);
+end function

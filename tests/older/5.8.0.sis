@@ -1,0 +1,25 @@
+function void(returns null)
+
+for initial
+  i := 1;
+  y := X[1]
+while i < n repeat
+  i := old i + 1;
+  y := old y + X[i]
+returns array of y
+end for
+
+end function % void
+
+function evolve(A_in: OneDim returns OneDim, integer)
+  for initial
+    A := A_in;
+    B := 0
+  while ~convergence(A) repeat
+    A := advance(old A);
+    B := change(A, old A)
+  returns
+    value of A,
+    value of B
+  end for
+end function % evolve

@@ -1,0 +1,17 @@
+function sieve(x: OneStr returns integer, OneStr)
+  first(x),
+  for element in rest(x) returns
+    stream of element
+    when element mod first(x)~=0
+  end for
+end function % sieve
+
+function Eratosthenes(n: integer returns stream[integer])
+  for initial
+    prime := 1;
+    x := for i in 2, n returns stream of i end for
+  while ~empty(x) repeat
+    prime, x := sieve(old x)
+  returns stream of prime
+  end for
+end function % Eratosthenes

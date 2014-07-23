@@ -1,0 +1,7 @@
+definition main
+
+function foo(a: integer; b: integer  returns integer, integer, integer)
+   a+b,
+   a-b,
+   0
+end function

@@ -1,0 +1,17 @@
+% case_type example
+
+#include "types.sse"
+
+function zero(x: numeric returns numeric)
+  case type x
+    of integer        then 0
+    of real           then 0.0
+    of double         then 0.0d0
+    of complex        then complex(0,0)
+    of double_complex then double_complex(0,0)
+ end case
+end function
+
+function main(x: numeric returns numeric)
+  zero(x)
+end function

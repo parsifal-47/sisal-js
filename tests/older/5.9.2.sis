@@ -1,0 +1,99 @@
+type OneDim = array[integer];
+type TwoDim = array[OneDim];
+type ThrDim = array[TwoDim];
+type ForDim = array[ThrDim];
+
+function void(returns null)
+
+for i in 1,3 cross j in 4,5 cross k in 7,8
+returns value of i end for
+
+for i in 1,3 cross x in A
+returns value of i end for
+
+for i in 1,3 cross x in A at k, l
+returns value of i end for
+
+for i in 1,n cross j in 1,i
+returns sum of A[i,j]
+end for
+
+for i in 1,3 cross j in 10,50,10
+returns array of i+j
+end for
+
+for i in 1,3 returns array of
+  for j in 10,50,10
+  returns array of i+j
+  end for
+end for
+
+for x in A at i,j
+returns array of foo(i,j,x)
+end for
+
+for row in A at i returns array of
+  for x in row at j
+  returns array of foo(i,j,x)
+  end for
+end for
+
+for i in 0,2 cross j in 0,2 cross k in 0,2
+returns array(0,0) of i+j+k
+end for
+
+for x in A at i,j
+returns array of x*x
+end for
+
+for i in 1,3 dot j in 4,6 cross k in 1,10
+returns array of i+j+k
+end for
+
+for i in 1,3 cross j in 4,6 cross k in 1,10
+returns array(2,5) of i+j+k
+end for
+
+for i in 1,3 cross j in 1,3 cross
+  k in 1,3 cross l in 1,3
+returns array_2d of i*1000+j*100+k*10+l
+end for
+
+for i in 1,3 returns array of
+  for j in 1,3 returns catenate of
+    for k in 1,3 returns catenate of
+      for l in 1,3 returns catenate of
+        array[i*1000+j*100+k*10+l]
+      end for
+    end for
+  end for
+end for
+
+for i in a,b cross j in c,d cross k in e,f cross l in q,h
+returns array of i+j+k+l
+end for
+
+for i in a,b returns array of
+  for j in c,d returns array of
+    for k in e,f returns array of
+      for l in g,h returns array of i+j+k+l
+      end for
+    end for
+  end for
+end for
+
+for i in a,b cross j in c,d cross k in e,f cross l in q,h
+returns array_2d of i+j+k+l
+end for
+
+for i in a,b returns array of
+  for j in c,d returns catenate of
+    for k in e,f returns catenate of
+      for l in g,h returns catenate of
+        array[i+j+k+l]
+      end for
+    end for
+  end for
+end for
+
+end function % void

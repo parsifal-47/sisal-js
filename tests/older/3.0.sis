@@ -1,0 +1,15 @@
+function foo(a, b: integer; c: real returns integer, real)
+  let
+    pi := 3.14159;
+    r := 2;
+  in
+    pi * r**2
+  end let
+
+  let
+    pi:real := 3.14159;
+    r:integer := 2;
+  in
+    pi * r**2
+  end let
+end function
