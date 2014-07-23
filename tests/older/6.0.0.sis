@@ -1,0 +1,13 @@
+function smaller(i, j: integer
+returns integer, array[character])
+  if i<j then i, "first"
+  elseif i>j then j, "second"
+  else i, "neither"
+  end if
+end function % smaller
+
+forward function foo(a, b: integer; c: real; d: OneDim
+returns OneDim)
+
+forward function foo(integer, integer, real, OneDim
+returns OneDim)

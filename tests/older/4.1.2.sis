@@ -1,0 +1,37 @@
+function void(returns null)
+
+A * B = [cij | cij = aij * bij]
+A ** B = [cij | cij = aij ** bij]
+A mod B = [cij | cij = aij mod bij]
+A <= B = [cij | cij = (aij <= bij)]
+A & B = [cij | cij = aij & bij]
+
+let
+  A := [1! 11, 22, 33];
+  B := [2! 10, 20, 30]
+in
+  A*B % [11*10, 22*20, 33*30]
+end let
+
+let
+  A := [1! 11, 22, 33];
+  B := [2! 10, 20]
+in
+  A*B % [11*10, 22*20, 33*error]
+end let
+
+let
+  A := [1! 11, 22, 33];
+  B := [2! 10, 20, 30]
+in
+  A*B, % [1! 11*10, 22*20, 33*30]
+  B*A, % [1! 11*10, 22*20, 33*30]
+end let
+
+let
+  B := [2! 10, 20, 30]
+in
+  2*B % [2, 2, 2]*[2! 10, 20, 30]
+end let
+
+end function % void

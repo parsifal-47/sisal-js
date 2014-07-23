@@ -1,0 +1,5 @@
+definition main
+
+function foo(A: array[integer]  returns array[integer])
+   addh(A, 4)
+end function

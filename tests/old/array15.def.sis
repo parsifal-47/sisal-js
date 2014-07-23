@@ -1,0 +1,5 @@
+definition main
+
+function main(A:array[array[integer]]  returns array[array[integer]])
+   A[!, 3 := 0]
+end function

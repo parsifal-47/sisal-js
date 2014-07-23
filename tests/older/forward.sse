@@ -1,0 +1,11 @@
+% forward function example
+
+forward function dublicate(integer returns integer, integer)
+
+function main(a:integer returns integer, integer)
+  dublicate(a)
+end function
+
+function dublicate(i: integer returns integer, integer)
+  i, i
+end function

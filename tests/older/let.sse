@@ -1,0 +1,10 @@
+% let example
+
+function main(a,b,c: real returns real, real)
+  let averange := (a + b + c)/3.0
+      diff_a := (a - averange) ** 2
+      diff_b := (b - averange) ** 2
+      diff_c := (c - averange) ** 2
+  in  averange, (diff_a + diff_b + diff_c) / 2.0
+  end let
+end function

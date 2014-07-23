@@ -1,0 +1,23 @@
+function void(returns null)
+
+10. ** 10 ** 100 % error[real], значение слишком велико
+
+sqrt(-5.0), % error[real]
+arcsin(2.d0), % error[double]
+
+let A := array[1! 2] % массив целых с нижней границей 1
+in A[0] % error[integer]
+end let
+
+let
+  BadValue := error[real]; % ошибка действительного типа
+  FooError := error[foo];  % ошибка пользовательского типа foo
+  GoodValue := 3;
+in
+  is error[BadValue],  % True
+  is error[GoodValue], % False
+  GoodValue = error[integer], % error[boolean]
+  BadValue = error[real], % error[boolean]
+end let
+
+end function % void

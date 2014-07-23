@@ -1,0 +1,22 @@
+type OneDim = array[real];
+type TwoDim = array[OneDim];
+type Strange = array[stream[OneDim]];
+
+type StrCmplx = stream[complex];
+type StrArray = stream[OneDim];
+
+type complex = record[real: real; imag: real];
+type double_complex = record[real, imag: double_complex];
+type my_complex = record[imag, real: real];
+
+type Employee = record[SSN: integer;
+  name:array[character];
+  salary: real;
+  start_date:record[month, year: integer]];
+type Employees = array[employee];
+
+type tree = union[root: record[left, right: tree];
+  leaf: real];
+
+type rgb = union[red, green, blue];
+type hsv = union[cyan, yellow, magenta];

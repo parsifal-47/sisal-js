@@ -1,0 +1,45 @@
+function multiply_add(a, b: integer; X: OneDim returns OneDim)
+  for z in X returns array of a*z+b end for
+end function % multiply_add
+function bit_reversal(n: integer returns OneDim)
+  for initial
+    double_add_0 := multiply_add(2,0,_);
+    double_add_1 := multiply_add(2,1,_);
+    index := array[0]
+  while size(index) < 2 ** n repeat
+    index := double_add_0(old index)|| double_add_1(old index)
+  returns value of setl(index,0)
+  end for
+end function % bit_reversal
+
+type RelF = function[real returns real];
+
+function simpson(a,b:real; m:integer; F:RealF
+returns real)
+  let delta := (b-a)/m
+  in delta/3*
+    for i in 0,m,2 % предположим m - четное
+      x0 := a+i*delta;
+      x1 := x0 + delta;
+      x2 := x1 + delta;
+    returns sum of (F(x0)+ 4*F(x1) + F(x2))
+    end for
+  end let
+end function
+
+function PolyN(Coeff: array[real]; x: real returns real)
+  for i in 0, size(Coeff) - 1
+  returns sum of Coeff[i]*x**i
+  end for
+end function % PolyN
+
+function void(returns null)
+
+goo := foo(x,_,_);
+hoo := foo(_,y,z);
+
+let PolyC := PolyN(Coeff,_)
+in simpson(a,b,m,PolyC)
+end let
+
+end function % void

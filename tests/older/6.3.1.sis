@@ -1,0 +1,29 @@
+type numeric = [integer, real, double];
+type OneDim = array[numeric];
+type BinFunc = function[numeric, numeric returns numeric];
+function Tree(X:OneDim; F:BinFunc returns numeric)
+  for while size(X) > 1 repeat
+    m := size(old X);
+    X :=
+      for i in 1, m-2, 2
+      returns array of f(old X[i], old X[i+1])
+      end for
+    ||
+      if m mod 2 = 0 then f(old X[m-1], old X[m])
+      else old X[m]
+      end if
+  returns value of X[1]
+  end for
+end function % Tree
+
+% Вернуть наименьший вход, больший 0. Если оба входа
+% меньше или равны 0, то вернуть 0.
+function least_positive(a, b: numeric returns numeric)
+  if a<=0 then max(0,b)
+  elseif b<=0 then a
+  else min(a,b)
+  end if
+end function % least_positive
+function main(X:array[real] returns real)
+  Tree(X, least_positive)
+end function % main

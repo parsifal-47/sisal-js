@@ -1,0 +1,22 @@
+type Degree = double;
+type Radian = double;
+
+function ops_on_angles(r:Radian; d:Degree
+  returns Radian, Radian, Degree, Degree)
+  r*2.0d, % Тип Double можно привести к типу Radian
+  d+r,    % неправильно, градусы не являются радианами
+  r/2.0,  % неправильно, тип real нельзя привести к типу
+          % Radian
+  d-180,  % неправильно, тип integer нельзя привести к
+          % типу Degree
+end function
+
+function void(returns null)
+
+x := Radian(2.0d0)
+
+end function % void
+
+function degree_to_radian(d:Degree returns Radian)
+  3.1415926535d0/180.0d0*d
+end function % Degree_to_Radian

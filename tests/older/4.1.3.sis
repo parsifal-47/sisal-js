@@ -1,0 +1,34 @@
+function void(returns null)
+
+let
+  i := 5;
+  A := array[2! 11, 22, 33, 44, 55, 66]
+in
+  A[2], % 11
+  A[i], % 44
+  A[i-1], % 33
+  A[-3], % error[integer] (индекс слишком мал)
+  A[8] % error[integer] (индекс слишком велик)
+end let
+
+let
+  A := array[11.1, 22.2, 33.3, 44.4, 55.5]
+in
+  A[1:5], % array[11.1, 22.2, 33.3, 44.4, 55.5]
+  A[:], % array[11.1, 22.2, 33.3, 44.4, 55.5]
+  A[1:5:2], % array[11.1, 33.3, 55.5]
+  A[5:2:-2], % array[55.5, 33.3, 11.1]
+  A[2:5:2], % array[22.2, 44.4]
+  A[1:0], % array[]
+  A[1:1:0] % error array
+end let
+
+V := array[11.1, 22.2, 33.3, 44.4, 55.5],
+Indices := array[3, 3, 2, 2, 1, 1, 4, 4],
+array[33.3, 33.3, 22.2, 22.2, 11.1, 11.1, 44.4, 44.4]
+
+end function % void
+
+function N_2d(n, k: integer returns integer, integer)
+  n/k, n mod k
+end function

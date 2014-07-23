@@ -1,0 +1,7 @@
+function void(returns null)
+
+foo := goo(_, 3)
+
+a, _ := integer_divide(5, 3)
+
+end function % void

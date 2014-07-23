@@ -1,0 +1,5 @@
+definition main
+
+function foo(A:array[array[array[real]]]  returns array[real])
+   A[1,1]
+end function

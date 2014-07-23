@@ -1,0 +1,21 @@
+type OneStr = stream[integer];
+
+function void(returns null)
+
+A := stream[6,0,2,2,5,2]; % поток целых
+
+A := stream OneStr [6,0,2,2,5,2];
+
+A := stream{6,0,2,2,5,2};
+
+A := OneStr{6,0,2,2,5,2};
+
+B := size(A); % размер потока
+C := empty(A); % проверка потока на пустоту
+D := first(A); % удаление первого элемента потока
+E := rest(A); % поток без первого элемента
+F := A || B % конкатенация
+
+% first(rest(rest...rest(A)...))
+
+end function % void

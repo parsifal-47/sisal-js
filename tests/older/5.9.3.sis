@@ -1,0 +1,36 @@
+function void(returns null)
+
+for i in 1,n cross j in 1,n
+  c := sum(A[i,1:n]*B[1:n,j])
+returns array of c
+end for
+
+end function % void
+
+function First_Sum(X:array[real] returns array[real])
+  for i in 2,n
+    X := old X[i! old X[i-1] + old X[i] ]
+  returns value of X
+  end for
+end function
+
+function First_Sum(X_in:array[real] returns array[real])
+  for initial
+    i := 1;
+    X := X_in
+  while i < n repeat
+    i := old i + 1
+    X := old X[i:old X[i-1] + old X[i] ]
+  returns value of X
+  end for
+end function
+
+function Horner(coeff: array[double]; X: double returns double)
+  let poly := 0.0d0
+  in
+    for C in coeff
+      poly := X*old poly + C
+    returns value of poly
+    end for
+  end let
+end function % Horner

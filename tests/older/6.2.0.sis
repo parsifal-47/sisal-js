@@ -1,0 +1,54 @@
+reduction forces(natoms:integer % начальные значения
+                 repeat x,y,z:real; i,j:integer
+                                % потоковые значения
+                 returns array[real]) % результаты
+  for initial
+    force := array_fill(1,3*natoms,0.0) % инициализация
+  repeat
+    i3 := 3*(i-1);
+    j3 := 3*(j-1);
+    force := old force[i3  !old force[i3]  -x; % force в x на i
+                       i3+1!old force[i3+1]-y; % force в y на i
+                       i3+2!old force[i3+2]-z; % force в z на i
+                       j3  !old force[j3]  +x; % force в x на j
+                       j3+1!old force[j3+1]+y; % force в y на j
+                       j3+2!old force[j3+2]+z] % force в z на j
+  returns value of force
+  end for
+end reduction % forces
+function bonds(natoms: integer; pair_list: TwoDim
+returns OneDim)
+  for i in pair_list[1] dot j in pair_list[2]
+    x,y,z := bond_force(i,j);
+  returns forces(natoms) of x,y,z,i,j
+  end for
+end function % bonds
+
+reduction my_sum(x:integer repeat z:integer returns integer)
+  for repeat
+    x := old x + z
+  returns value of x
+  end for
+end reduction % my_sum
+function Array_plus_x(x:integer; A:OneDim returns integer)
+  for z in A returns my_sum(x) of z end for
+end function % Array_plus_x
+
+reduction first_minimum(repeat x:real; index:integer
+returns real, integer)
+  for initial
+    min_index := $maxint;
+    min_value := $max_real
+  repeat
+    min_value, min_index :=
+      if x < old min_value then
+        x, index
+      elseif x = old min_value & index < old min_index then
+        x, index
+      else
+        old min_value, old min_index
+      end if
+  returns value of min_value
+    value of min_index
+  end for
+end reduction % first_minimum

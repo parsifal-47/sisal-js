@@ -1,0 +1,25 @@
+function void(returns null)
+
+A_threshold := where A < 0.0 then -1.0
+  elsewhere A = 0.0 then 0.0
+  else 1.0
+end where
+
+if A[i,j] < 0.0 then -1.0
+elseif A[i,j] = 0.0 then 0.0
+else 1.0
+end if
+
+A_reciprocal := where A ~= 0.0 then
+  1/A
+else
+  0.0
+end where
+
+if A[i,j] ~= 0.0 then
+  1/A[i,j]
+else
+  0.0
+end if
+
+end function % void

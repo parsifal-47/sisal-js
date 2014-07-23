@@ -1,0 +1,30 @@
+function void(returns null)
+
+G := function(x:real returns real)
+  sqrt(sqrt(x**n))
+end function
+
+for i in 1,n
+  x := sqrt(old x)
+returns value of x
+end for
+
+sqrt_N :=
+  for initial
+    i := 1;
+    f := function(x:real returns real)
+      sqrt(x)
+    end function
+  while i < n repeat
+    i := old i + 1;
+    f := function(x:real returns real)
+      sqrt(old f(x))
+    end function
+  returns value of f
+  end for
+
+end function % void
+
+function(x:real returns real)
+ sqrt( sqrt( sqrt(x) ) )
+end function
