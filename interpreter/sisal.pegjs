@@ -513,7 +513,7 @@ it would be good to support compartible Sisal 2.0 array definitions like [1; 2, 
 */
 
 ArrayItself
-  = (ArrayToken __ t:DataType __)? "[" (__ Expression:startIndex __ ":")? ExpressionList:contents "]"
+  = (ArrayToken __ "[" __ t:DataType __ "]" __)? "[" (__ startIndex:Expression __ ":")? contents:ExpressionList "]"
 /* ===== A.3 Expressions ===== */
 
 Expression
