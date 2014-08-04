@@ -1,0 +1,9 @@
+% function call example
+
+function zero(returns integer)
+  0
+end function
+
+function main(returns integer)
+  zero()
+end function

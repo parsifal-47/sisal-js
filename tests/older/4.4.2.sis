@@ -1,0 +1,30 @@
+function void(returns null)
+
+let
+  u1 := scalar_numeric{i ! 11};
+  u2 := scalar_numeric{r ! 22.2};
+  u3 := scalar_numeric{d ! 33.3d0}
+in
+  U1.I, U2.R, U3.D % 11, 22.2, 33.3d0
+end let
+
+let
+  u4 := scalar_numeric{i ! 11}
+in
+  u4.r % error[real]; u4 имеет тэг i;
+       % тэг r имеет тип real
+end let
+
+if tag(u1, i) then
+  "An integer value"
+else
+  "Must be something else"
+end if
+
+case tag u1
+  of i then u1.i
+  of r then integer(u2.r)
+  of d then integer(u3.d)
+end case
+
+end function % void

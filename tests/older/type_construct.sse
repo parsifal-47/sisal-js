@@ -1,0 +1,33 @@
+% different type constructors
+
+type a = array[integer]
+type s = stream[integer]
+type r = record[i:integer; r:real]
+type u = union[i:integer; r:real]
+
+function main(returns any, any, any, any, boolean)
+  let % all corresponding type constructors below has the same IR1 representation
+    A := [1,2,3];
+    A := array[1,2,3];
+    A := array a[1,2,3];
+    A := array a[1!1,2,3];
+    A := a{1,2,3};
+
+    S := stream [1,2,3];
+    S := stream s[1,2,3];
+    S := s{1,2,3};
+
+    R := record r[i!1;r!2];
+    R := record r[i,r!1,2];
+    R := record r[i!1;r!2];
+    R := r{1,2};
+    R := replace R[i,r!1,2];
+    R := replace replace R[i,r!1,2] [i,r!1,2];
+
+    U := union u[i!1];
+    U := u{i!1};
+    bool := tag(U, i);
+
+  in A, S, R.i, U, bool
+  end let
+end function

@@ -1,0 +1,13 @@
+type floats = [real, double];
+type non_complex = [integer, floats];
+type all_complex = [complex, double_complex];
+type numeric = [all_complex, non_complex];
+
+function largest_value(A: array[non_complex]
+  returns non_complex)
+  for element in A
+  returns greatest of element
+  end for
+end function % largestt_value
+
+type integer_or_array = [integer, array[integer_or_array]];

@@ -1,0 +1,9 @@
+type OneDim = array[real];
+global function rest_of_program(i:integer returns real)
+function main(i:integer; $density:OneDim returns real)
+  let n := i*i;
+    $version := "3.1.4";
+    $squares := for j in 1,n returns array of j*j end for;
+  in rest_of_program(n)
+  end let
+end function % main

@@ -1,0 +1,9 @@
+% if example
+
+function main(age: integer returns array[character])
+  if age < 5 then        "infant"
+    elseif age < 18 then "child"
+    elseif age < 65 then "adult"
+    else                 "senior"
+  end if
+end function

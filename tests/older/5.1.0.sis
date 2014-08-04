@@ -1,0 +1,15 @@
+function void(returns null)
+
+for i in 1,3
+returns array of i*i
+end for
+
+for initial
+  guess := initial_guess
+repeat
+  guess := (old guess + x / old guess) * 0.5d0
+while abs(guess - old guess) >= guess * epsilon
+returns value of guess
+end for
+
+end function % void

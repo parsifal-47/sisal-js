@@ -1,0 +1,5 @@
+definition main
+
+function foo(a:integer  returns integer,integer,integer,integer)
+   a,a,a,a
+end function

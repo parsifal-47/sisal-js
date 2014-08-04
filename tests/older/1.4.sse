@@ -1,0 +1,17 @@
+% Function: Priviledes
+% Description: Return the employee's privileges
+%
+
+global function Job_category(array[character], array[character] returns boolean)
+
+function Privileges(employee_type: array[character] returns array[character])
+  if Job_Category(employee_type, "secretary") then
+    "all" % secretaries are all powerful
+  else
+    "none"
+  end if
+end function
+
+function main(returns array[character])
+  Privileges("secretary")
+end function

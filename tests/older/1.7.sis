@@ -1,0 +1,9 @@
+function void(returns null)
+
+2 * 2.d0 = 2.d0 * 2.d0
+3.5 mod 3 = 3.5 mod 3.0
+3 mod 0.4 = 3.0 mod 0.4
+2 * complex[1, 0] = complex[2.0, 0.0] * complex[1.0, 0.0]
+2.0d0 * complex[1, 0] = double_complex[2.d0, 0.d0] * double_complex[1.d0, 0.d0]
+
+end function % void

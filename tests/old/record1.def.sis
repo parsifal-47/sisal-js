@@ -1,0 +1,7 @@
+definition main
+
+type T = array[record[A: array[integer]; n: integer]]
+
+function main(S: T  returns array[integer])
+   S[1].A
+end function

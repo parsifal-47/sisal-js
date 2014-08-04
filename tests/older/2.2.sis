@@ -1,0 +1,23 @@
+function void(returns null)
+
+absolute_value := if x < 0 then
+  -x
+else
+  x
+end if;
+quotient, remainder := if divisor ~= 0 then
+  divident/divisor, divident mod divisor
+else
+  error[integer], error[integer]
+end if;
+person_type := if age < 5 then
+  "infant"
+elseif age < 18 then
+  "child"
+elseif age < 65 then
+  "adult"
+else
+  "senior"
+end if;
+
+end function % void
