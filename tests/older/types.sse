@@ -1,0 +1,6 @@
+% types example
+
+type floats = [real, double]
+type non_complex = [integer, floats]
+type all_complex = [complex, double_complex]
+type numeric = [all_complex, non_complex]

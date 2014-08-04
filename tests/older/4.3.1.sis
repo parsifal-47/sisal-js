@@ -1,0 +1,30 @@
+type polar = record[r, theta: real];
+
+function Polar_3(x,y:real
+returns polar,polar,polar)
+  record polar[r!x; theta!y],
+  record[r,theta!x,y],
+  polar{x,y}
+end function %Polar_3
+
+function void(returns null)
+
+let
+  x := 2.0;
+  y := $pi/4.0;
+  A := record[r,theta ! x,y]
+in
+  % удвоение величины вектора
+  replace A[r ! 2*x],
+  % отражение вектора относительно оси x-y
+  replace A[theta ! y+$pi],
+  % удвоение величины вектора и отражение его
+  % относительно оси x-y
+  replace (replace A[r ! 2*x]) [theta ! y+$pi]
+end let
+
+replace A[r ! 2*x; theta ! y+$pi]
+
+replace A[r,theta ! 2*x, y+$pi]
+
+end function % void

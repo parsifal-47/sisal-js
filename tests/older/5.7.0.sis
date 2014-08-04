@@ -1,0 +1,10 @@
+function evolve(A: OneDim returns OneDim, integer)
+  for repeat
+    A := advance(old A);
+    B := change(A, old A)
+  while ~convergence(A)
+  returns
+    value of A
+    value of B
+  end for
+end function % evolve

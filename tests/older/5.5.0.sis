@@ -1,0 +1,37 @@
+function void(returns null)
+
+for i in 2,1
+  x := array[1:i]
+returns
+  sum of i, % 0
+  product of i, % 1
+  least of i, % $maxint
+  greatest of i, % $minint
+  array of i, % array OneArr[1: ]
+  array(5) of i, % array OneArr[5: ]
+  stream of i, % stream OneStr[]
+  catenate of x, % array OneArr[1: ]
+  catenate(5) of x % array OneArr[5: ]
+end for
+
+end function % void
+
+function evolve(A: OneDim returns OneDim, integer)
+  for while ~convergence(A) repeat
+    A := advance(old A);
+    B := change(A, old A)
+  returns
+    value of A,
+    value of B
+  end for
+end function % evolve
+function member(target: integer; A: OneDim returns boolean)
+  let found := false
+  in
+    for while size(A) > 0 & ~found repeat
+      found := (target = old A[1]);
+      A := reml(old A)
+    returns value of found
+    end for
+  end let
+end function % member

@@ -1,0 +1,20 @@
+function void(returns null)
+
+let
+  average := (a + b + c) / 3.0;
+  diff_a := (a - average) ** 2;
+  diff_b := (b - average) ** 2;
+  diff_c := (c - average) ** 2
+in
+  average, (diff_a + diff_b + diff_c) / 2.0
+end let
+
+let
+  a := 1;
+  b := let a := 2.0 in 3.0 * a end let;
+  c := integer(b)
+in
+  a + c % 1 + 6
+end let
+
+end function % void

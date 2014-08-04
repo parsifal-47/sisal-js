@@ -1,0 +1,12 @@
+definition main
+
+type T = record[A: array[integer]; n: integer]
+
+function main(returns T)
+   let
+      B := array[integer] {0, 1, 2, 3, 4, 5};
+      m := size(B)
+   in
+      T {A, n := B, m}
+   end let
+end function

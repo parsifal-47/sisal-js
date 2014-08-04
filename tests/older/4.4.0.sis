@@ -1,0 +1,1 @@
+type scalar_numeric = union[i: integer; r: real; d: double];

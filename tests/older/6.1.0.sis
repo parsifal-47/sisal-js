@@ -1,0 +1,29 @@
+function mmul(n,m:integer; A,B:array[array[complex]]
+returns array[array[complex]])
+  nil % *** to skip empty function body error
+end function
+
+function mmul(n,m:integer; A,B:array[array[complex]]
+returns array[array[complex]])
+  let
+    C := for i in 1,n cross j in 1,m
+    returns array of sum(A[i,1:m]*B[1:m,j])
+    end for
+  in C
+  end let
+end function % mmul
+
+function mmul(n,m:integer; A,B:array[array[complex]]
+returns array[array[complex]])
+  for i in 1,n cross j in 1,m
+  returns array of sum(A[i,1:m]*B[1:m,j])
+  end for
+end function % mmul
+
+function void(returns null)
+
+D := mmul(n,m,A,B) + C;
+
+_,i := first_minimum(X);
+
+end function % void

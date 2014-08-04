@@ -1,0 +1,11 @@
+definition main
+
+function foo(a:integer; b:integer  returns integer)
+   let p := if ( a * b >= 0 )
+               then a * b
+            else
+               0
+            end if
+   in p * p
+   end let
+end function

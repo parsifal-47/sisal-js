@@ -1,0 +1,5 @@
+definition main
+
+function foo(returns integer)
+  2 
+end function

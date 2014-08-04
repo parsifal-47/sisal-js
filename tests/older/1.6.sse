@@ -1,0 +1,33 @@
+function main(str: array[character];
+              x1,x2,y1,y2,x,y,z,i,j,k,a,b: integer;
+              b1,b2,b3,b4: boolean returns boolean)
+  let 
+    a0, b0, c0, d0, e0, f0 := x1 * y1 + x2 * y2 = (x1 * y1) + (x2 * y2),
+    x + y + z = (x + y) + z,
+    x ** -y = x ** (-y),
+    i + j mod 4 = i + (j mod 4),
+    x / y / z = (x / y) / z,
+    y ** x ** 2 = y ** (x ** 2);
+
+    g0, h0, i0 := (i < j < k) = ((i < j) & (j < k)),
+    (i = j = k) = ((i = j) & (j = k)),
+    (0 < i = j <= 99) = ((0 < i) & (i = j) & (j <= 99));
+  
+    j0, k0, l0 := b1 | ~b2 & b3 = b1 | ((~b2) & b3),
+    b1 | b2 & b3 | b4 = (b1 | (b2 & b3)) | b4,
+    b1 & b2 & b3 = (b1 & b2) & b3;
+  
+    m0 := (b ~= 0 & a/b > 0);
+
+    n0 := if (error[boolean] & false = false) & (error[boolean] | true = true)
+         then 1 else 0 end if;
+    o0 := str || "\n"; % конкатенация
+    p0 := str[i];  % извлечение символа
+    r0 := str[i:j];  % извлечение подстроки
+    s0:array[character], t0 := let c := 'a'
+      in array[c], % строка "a"
+        ['b'] % строка "b"
+      end let
+  in a0|b0|c0|d0|e0|f0|g0|h0|i0|j0|k0|l0|n0|o0|p0|r0|s0|t0
+  end let
+end function % main

@@ -1,0 +1,5 @@
+definition main
+
+function foo(returns character)
+   'a'
+end function

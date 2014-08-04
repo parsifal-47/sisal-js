@@ -1,0 +1,17 @@
+function void(returns null)
+
+for i in 1,3
+returns
+  value of i, % last value = 3
+  sum of i, % 1+2+3=6
+  product of i, % 1*2*3=6
+  least of i, % min(1,2,3)=1
+  greatest of i, % max(1,2,3)=3
+  array of i, % [1!1,2,3]
+  array(0) of i, % [0!1,2,3]
+  stream of i, % stream[1,2,3]
+  catenate of text[i], % [S,I,S,A,L, ,I,S, ,N,I,C,E]
+  catenate(0) of text[i] % [0!S,I,S,A,L, ,I,S, ,N,I,C,E]
+end for
+
+end function % void

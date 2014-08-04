@@ -1,0 +1,11 @@
+function reflect(A : polar returns polar)
+  replace A[theta ! 2*$pi - A.theta]
+end function
+
+function void(returns null)
+
+reflect(A).theta
+
+(if 0<=A.theta<=$pi then A else reflect(A) end if).theta
+
+end function % void

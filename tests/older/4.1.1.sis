@@ -1,0 +1,47 @@
+type OneDim = array[integer];
+
+function void(returns null)
+
+A := array[1!6,0,2,2,5,2]; % нижняя граница 1
+B := array[5!5,5,5,1,2,1,2]; % нижняя граница 5
+C := array[-5!5,5,5,1,2,1,2] % нижняя граница -5
+
+A := [6,0,2,2,5,2]; % эквивалентное определение
+  % для А
+
+fill(1,5,0); % array[1!0,0,0,0,0]
+
+array OneDim [6,0,2,2,5,2];
+
+A := array{6,0,2,2,5,2};
+A := OneDim{6,0,2,2,5,2};
+
+D := A[1!5]; % замещение
+E := A[1!5,6,7]; % замещение
+F := A[2:4]; % выбор подмассива
+G := A[2:6:2]; % выбор подмассива с шагом 2
+H := reml(A); % удаление элемента с нижним индексом
+I := remh(A); % удаление элемента с верхним индексом
+J := addl{A,3}; % добавление элемента в начало
+K := addh(A,3); % добавление элемента в конец
+L := setl(A,0); % установка нижней границы
+M := A||B % конкатенация
+
+E := A[1!5; 2!6; 3!7];
+E := A[1!5] [2!6] [3!7];
+
+end function % void
+
+function FIFO(op, value: integer; queue: array[integer]
+  returns integer, array[integer])
+  case op
+    of 0 then % удалить первый элемент
+      queue[1], setl(reml(queue), 1)
+    of 1 then % удалить последний элемент
+      queue[size(queue)], remh(queue)
+    of 2 then % добавить элемент в начало
+      0, setl(addl(queue, value), 1)
+    of 3 then % добавить элемент в конец
+      0, addh(queue, value)
+  end case
+end function % FIFO

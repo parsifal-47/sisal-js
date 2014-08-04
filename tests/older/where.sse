@@ -1,0 +1,10 @@
+% where example
+
+type A2 = array[array[real]]
+
+function main(A: A2 returns A2)
+  where A < 0.0 then       -1.0
+    elsewhere A = 0.0 then  0.0
+    else                    1.0
+ end where
+end function

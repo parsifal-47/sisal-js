@@ -1,0 +1,10 @@
+% case example
+
+function main(pet: array[character] returns array[character])
+  case pet
+    of "fish" then                     "bowl"
+    of "cat", "dog" then               "house"
+    of "mouse", "hamster", "bird" then "cage"
+    else                               "n/a"
+ end case
+end function
