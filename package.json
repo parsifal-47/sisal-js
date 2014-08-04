@@ -1,0 +1,15 @@
+{
+	"name": "sisal-js",
+	"url": "https://github.com/parsifal-47/sisal-js/issues/",
+	"license" : "BSD-3-Clause",
+	"version" : "0.0.1",
+	"main" : "si.js",
+	"repository" : { 
+		"type" : "git",
+		"url" : "https://github.com/parsifal-47/sisal-js.git"
+	},
+	"dependencies" : {
+		"pegjs": "0.8.x",
+		"buster": "busterjs/buster"
+	}
+}
