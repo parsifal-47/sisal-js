@@ -255,62 +255,29 @@ function irGenerator() {
 	}
 }
 
-function mockXML() {
-  return '<?xml version="1.0" encoding="UTF-8"?>'+
-	'<graphml><graph id="ir1" edgedefault="directed" width="400" height="400">' +
-      '<node id="n0" xx="50" yy="50" width="300" height="300">' +
-        '<data key="type">function</data>' +
-        '<graph id="n0:" edgedefault="directed">' +
-          '<node id="n0::p0" cx="100">' +
-            '<data key="type">integer</data>' +
-            '<data key="subPort">true</data>' +
-          '</node>' +
-          '<node id="n0::p1" cx="200">' +
-            '<data key="type">integer</data>' +
-            '<data key="subPort">true</data>' +
-          '</node>' +
-          '<node id="n0::p2" cx="150">' +
-            '<data key="type">integer</data>' +
-                '<data key="subPort">true</data>' +
-                '<data key="output">true</data>' +
-          '</node>' +
-          '<node id="n0::n0" xx="100" yy="100">' +
-	            '<data key="type">+</data>' +
-            '<port name="left"  />' +
-            '<port name="right" />' +
-            '<port name="out" />' +
-          '</node>' +
-     	  '<node id="n0::n1" xx="200" yy="200">' +
-                '<data key="type">*</data>' +
-            '<port name="left" />' +
-            '<port name="right" />' +
-            '<port name="out" />' +
-          '</node>' +
-		      '<edge source="n0::p0" target="n0::n0" targetport="left" path="M 100 0 L 117 100" />' +
-          '<edge source="n0::p0" target="n0::n1" targetport="right" path="M 100 0 L 231 200" />' +
-          '<edge source="n0::p1" target="n0::n1" targetport="left" path="M 203 0 L 131 100" />' +
-          '<edge source="n0::n1" target="n0::n0" sourceport="out" targetport="right" path="M 123 143 L 217 200" />' +
-          '<edge source="n0::n0" target="n0::p2" sourceport="out" path="M 223 243 L 150 303" />' +
-        '</graph>' +
-      '</node>' +
-    '</graph></graphml>';
-}
-
 function sisalir(ast){ // constructs sisal IR from Abstract syntax tree
-	var irGen = new irGenerator();
-  var self = this;
-	this.nodes=[];
-	this.toGraphML = mockXML;
-	for (var i=0;i<ast.length;i++) {
-		this.addNodes(irGen.parse(ast[i]));
-	}
-  this.execute = function () {
-    var result = [];
-    for (var i=0; i<nodes.length; i++) {
-      if (nodes[i].execute) result.push(nodes[i].execute());
+    var irGen = new irGenerator();
+    var self = this;
+
+    this.nodes=[];
+
+    for (var i=0;i<ast.length;i++) {
+    	this.addNodes(irGen.parse(ast[i]));
     }
-    return result;
-  }
+    this.toGraphML = function () {
+    	var xmlstr = '';
+        for (var i=0; i<self.nodes.length; i++) {
+           xmlstr += self.nodes[i].toXML("n" + i);
+        }
+        return graphmlgen.headers(xmlstr);    
+    }
+    this.execute = function () {
+        var result = [];
+        for (var i=0; i<self.nodes.length; i++) {
+          if (self.nodes[i].execute) result.push(self.nodes[i].execute());
+        }
+        return result;
+    }
 }
 
 sisalir.prototype=node.complex;
