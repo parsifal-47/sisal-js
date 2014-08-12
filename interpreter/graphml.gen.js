@@ -19,6 +19,6 @@ var graphmlgen = {
         return '<port name="'+name+'"  />\n';
     },
     edge : function (source, target, sourcePort, targetPort) {
-        return '<edge source="'+source+'" target="'+target+'" sourceport="'+sourcePort+'" targetport="'+targetPort+'">\n';
+        return '<edge source="'+source+'" target="'+target+'" sourceport="'+sourcePort+'" targetport="'+targetPort+'" />\n';
     }
 }
