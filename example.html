@@ -26,13 +26,19 @@ Sisal translator check
 </h2>
 <script language=JavaScript>
 function trn() {
-ast=module.exports.parse(document.getElementById('source').value);
-console.log(ast);
-ir= new sisalir(ast);
-console.log(ir);
-console.log(ir.toGraphML());
-document.getElementById('visBtn').style.display = '';
+  ast=module.exports.parse(document.getElementById('source').value);
+  console.log(ast);
+  ir= new sisalir(ast);
+  console.log(ir);
+  console.log(ir.toGraphML());
+  document.getElementById('visBtn').style.display = '';
 }
+function exc() {
+  ast=module.exports.parse(document.getElementById('source').value);
+  ir= new sisalir(ast);
+  console.log(ir.execute());
+}
+
 function vis() {
 xsl = XsltTransform.getXMLFromUrl('graphml2svg/graphml2svg.xsl');
 Layout.prepareGraphML(ir.toGraphML(), ir, function(xml) {
@@ -60,6 +66,7 @@ function Main2( M,N : integer returns integer )
 end function
 -->
 <p><button onclick='trn();'>translate (result in console log)</button></p>
+<p><button onclick='exc();'>translate & execute (result in console log)</button></p>
 <p><button onclick='vis();' id='visBtn' style='display:none;'>vis (result in console log)</button></p>
 
 Another example:
