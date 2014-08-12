@@ -41,7 +41,7 @@ var edge = {
     },
     toXML : function (id, e) {
         return graphmlgen.edge(e.nodeFrom<0 ? id :id+"::n"+e.nodeFrom, e.nodeTo<0 ? id : id+"::n"+e.nodeTo, 
-                    (e.nodeFrom<0?"in":"out")+e.portFrom, (e.nodeFrom<0?"out":"in")+e.portTo);
+                    (e.nodeFrom < 0 ? "in" : "out") + e.portFrom, (e.nodeTo < 0 ? "out" : "in") + e.portTo);
     }
 }
 
