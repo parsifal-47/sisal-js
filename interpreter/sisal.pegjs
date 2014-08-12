@@ -583,7 +583,7 @@ Priority1Operation
     }
 
 Priority2Operator
-	= "*" !"*"
+	= "*"
 	/ "/"
 	/ "%"
 
