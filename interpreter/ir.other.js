@@ -6,7 +6,7 @@ var color = {
     },
     getColor : function (nodes) {
         if (helper.isArray(nodes)) return this.getColor(nodes[0]); // output node always come first
-        if (helper.isArray(nodes.outPorts)) {
+        if (helper.isArray(nodes.outPorts) && (!nodes.fake)) {
             if (!nodes.outPorts[0]) return 0; // no out port -- no color
             return nodes.outPorts[0].color;
         }
