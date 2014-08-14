@@ -726,28 +726,28 @@ IfExpression
 
 LoopExpression
 	= ForToken __ r:RangeGen dl:( __ RepeatToken __ DefinitionList)? __ ReturnsToken __ ret:ReturnExpression __ EndToken __ ForToken
-		{return {type: "For", range:r, body:(dl!==""?dl[3]:""), returns:ret}}
+		{return {type: "For", range:r, body:(dl!==null?dl[3]:""), returns:ret}}
 	/ ForToken __ InitialToken __ init:DefinitionList expr:( __ WhileToken __ Expression)? body:( __ RepeatToken __ DefinitionList )? __ ReturnsToken __ ret:ReturnExpression __ EndToken __ ForToken
-		{return {type: "For", init:init, condition:(expr!==""?expr[3]:""), body:(body!==""?body[3]:""), returns:ret }}
+		{return {type: "For", init:init, condition:(expr!==null?expr[3]:""), body:(body!==null?body[3]:""), returns:ret }}
 	/ ForToken __ WhileToken __ expr:Expression body:( __ RepeatToken __ DefinitionList )? __ ReturnsToken __ ret:ReturnExpression __ EndToken __ ForToken
-		{return {type: "For", init:null, condition:expr, body:(body!==""?body[3]:""), returns:ret }}
+		{return {type: "For", init:null, condition:expr, body:(body!==null?body[3]:""), returns:ret }}
 	/ ForToken __ RepeatToken __ body:DefinitionList __ WhileToken __ expr:Expression __ ReturnsToken __ ret:ReturnExpression __ EndToken __ ForToken {return {type: "For", init:null, condition:expr, body:body, returns:ret }}
 
 RangeGen
-	= range:ForIndexRange gen:( (__ CrossToken / __ DotToken ) __ RangeGen)? { if (gen!=="") return {type:gen[0][1][0], left:range, right:gen[2] }; else return range;}
+	= range:ForIndexRange gen:( (__ CrossToken / __ DotToken ) __ RangeGen)? { if (gen!==null) return {type:gen[0][1][0], left:range, right:gen[2] }; else return range;}
 
 ForIndexRange
 	= name:Identifier __ InToken __ range:ForIndexRangeTriplet {return {type: "Range", name:name, range:range }}
 
 ForIndexRangeTriplet
-	= exp:Expression exp2:(__ "," __ Expression )? exp3:(__ "," __ Expression )?  { return {type:"RangeTriplet", exp:exp, exp2:exp2 !== "" ? exp2[3] : "", exp3:exp3!==""?exp3[3]:"" }}
+	= exp:Expression exp2:(__ "," __ Expression )? exp3:(__ "," __ Expression )?  { return {type:"RangeTriplet", exp:exp, exp2:exp2 !== "" ? exp2[3] : "", exp3:exp3!==null?exp3[3]:"" }}
 
 ReturnExpression
 	= r:ReductionWithInitial __ OfToken __ el:ExpressionList el2:(__ WhenToken __ ExpressionList )? rt:(__ ";" __ ReturnExpression)?
-	{ return {type:"Return Expression", reduction:r, expressions:el, whenex: el2!==""?el2[3]:"", retexp:rt!==""?rt[3]:""}}
+	{ return {type:"Return Expression", reduction:r, expressions:el, whenex: el2!==null?el2[3]:"", retexp:rt!==null?rt[3]:""}}
 
 ReductionWithInitial
-	= name:ReductionName exp:(__ "(" __ ExpressionList __ ")")? {return {type:"Reduction", name:name, expressions: exp!==""?exp[3]:"" }}
+	= name:ReductionName exp:(__ "(" __ ExpressionList __ ")")? {return {type:"Reduction", name:name, expressions: exp!==null?exp[3]:"" }}
 
 ReductionName
 	= Identifier

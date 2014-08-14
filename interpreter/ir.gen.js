@@ -67,7 +67,7 @@ function irGenerator() {
 	}
 
 	this.parseComplex = function (astNode, complex, inputs) {
-		if (!astNode) return "";
+		if (!astNode) return new node.fake(0);
 
 		if (helper.isArray(astNode)) {
 			for (var i=0;i<astNode.length;i++) {
