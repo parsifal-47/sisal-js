@@ -29,7 +29,6 @@ var node = {
 
             for (i=0; i<this.inPorts.length; i++) innerXML += graphmlgen.port('in' + i);
             for (i=0; i<this.outPorts.length; i++) innerXML += graphmlgen.port('out' + i);
-            console.log(this.nodes);            
             for (i=0; i<this.nodes.length; i++) innerXML += this.nodes[i].toXML(id + '::n' + i);
             for (i=0; i<this.edges.length; i++) innerXML += edge.toXML(id, this.edges[i]);
             return graphmlgen.node(id, data, graphmlgen.subgraph(id + ':', innerXML));
