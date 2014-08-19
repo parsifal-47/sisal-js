@@ -6,7 +6,8 @@
 	<script src="graphml2svg/js/jquery.js" ></script>	
 
 
-	<script src="lib/lex.js" ></script>	
+	<script src="lib/lex.js" ></script>
+  <script>var lex = module.exports;module.exports = undefined;</script>
 	<script src="lib/ir.nodes.js" ></script>	
 	<script src="lib/ir.other.js" ></script>	
 	<script src="lib/ir.gen.js" ></script>	
@@ -26,7 +27,7 @@ Sisal translator check
 </h2>
 <script language=JavaScript>
 function trn() {
-  ast=module.exports.parse(document.getElementById('source').value);
+  ast=lex.parse(document.getElementById('source').value);
   console.log(ast);
   ir= new sisalir(ast);
   console.log(ir);
