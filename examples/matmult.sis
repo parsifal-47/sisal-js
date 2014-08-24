@@ -1,5 +1,3 @@
-definition main
-
 function Main( A,B: array[array[real]];  M,N,L : integer returns array[array[real]] )
   for i in 1, M cross j in 1, L
   returns array of 
