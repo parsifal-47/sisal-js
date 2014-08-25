@@ -1,0 +1,7 @@
+function foo(a:integer; b:integer  returns integer)
+   if ( a > b ) then
+      a - b
+   else
+      b - a
+   end if
+end function

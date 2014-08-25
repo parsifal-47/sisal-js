@@ -1,0 +1,3 @@
+function foo(returns character)
+   'a'
+end function

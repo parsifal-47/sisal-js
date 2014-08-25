@@ -1,0 +1,7 @@
+function foo(A: array[integer]  returns array[array[integer]])
+   for  I in 1, 100
+   repeat
+      A := addh(old A, 0)
+   returns  array of A
+   end for
+end function

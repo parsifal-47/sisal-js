@@ -1,0 +1,11 @@
+function foo(N:integer; T:integer; S:integer  returns integer)
+   for initial
+      t := T;
+      s := S;
+      i := 0
+   while ( i <= 2*N )
+   repeat
+      i := old i + (t * s) + 2*S
+   returns value of i
+   end for
+end function

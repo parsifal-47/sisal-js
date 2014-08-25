@@ -1,0 +1,3 @@
+function foo(S: integer; T: integer  returns integer)
+   S + T + 1 + 2 + 3
+end function

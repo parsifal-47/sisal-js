@@ -1,0 +1,3 @@
+function foo(A:array[integer]  returns array[integer])
+   A
+end function

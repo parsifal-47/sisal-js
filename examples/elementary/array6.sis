@@ -1,0 +1,3 @@
+function main(A:array[array[real]]; N:integer  returns real)
+  A[N-1,N+1]
+end function

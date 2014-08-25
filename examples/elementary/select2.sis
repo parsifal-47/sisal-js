@@ -1,0 +1,25 @@
+function foo(a:integer  returns integer)
+  if (a=0) then
+    0
+  elseif (a=1) then
+    1
+  elseif (a=2) then
+    2
+  elseif (a=3) then
+    3
+  elseif (a=4) then
+    4
+  elseif (a=5) then
+    5
+  elseif (a=6) then
+    6
+  elseif (a=7) then
+    7
+  elseif (a=7) then
+    8
+  elseif (a=9) then
+    9
+  else
+    10
+  end if
+end function

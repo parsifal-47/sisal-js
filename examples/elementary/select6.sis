@@ -1,0 +1,5 @@
+function foo(a:integer; b:integer  returns integer)
+   case (a)
+      of 0  then  2
+   end case
+end function

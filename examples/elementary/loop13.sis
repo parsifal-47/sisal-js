@@ -1,0 +1,5 @@
+function length(returns array[integer])
+   for  I in 1, 100
+      returns  array of I
+   end for
+end function

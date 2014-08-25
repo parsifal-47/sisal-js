@@ -1,0 +1,11 @@
+function length(A: array[integer]; N: integer returns integer)
+   let
+      s := 0
+   in
+      for i in A
+      repeat
+         s := old s + i
+      returns value of s
+      end for
+   end let
+end function

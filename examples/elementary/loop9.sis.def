@@ -1,0 +1,12 @@
+function length(N: integer returns integer)
+   for initial
+      L := if N >= 0 then 0
+                     else 1
+           end if
+   repeat
+      N := old N / 10;
+      L := old L + 1
+   while N ~= 0
+   returns value of L
+   end for
+end function

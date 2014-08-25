@@ -1,5 +1,0 @@
-definition main
-
-function foo(A:array[integer]; N:integer  returns integer)
-   A[N]
-end function

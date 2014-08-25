@@ -1,5 +1,0 @@
-definition main
-
-function main(A:array[array[integer]]  returns array[array[integer]])
-   A[!2, !!2]
-end function

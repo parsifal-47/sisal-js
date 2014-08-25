@@ -1,0 +1,5 @@
+function main(A:array[real] returns array[real])
+  let B:=remh(A)
+    in B
+  end let
+end function

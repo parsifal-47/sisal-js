@@ -1,0 +1,3 @@
+function foo(i:integer  returns integer)
+  i
+end function
