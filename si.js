@@ -7,7 +7,7 @@ var repl = require("repl");
 
 function eval(cmd, context, filename, callback) {
   var clean = cmd.substring(1, cmd.length -2); // removing extra brackets
-  var result = JSON.stringify(si.run(cmd));
+  var result = si.run(cmd);
   callback(null, result);
 }
 
