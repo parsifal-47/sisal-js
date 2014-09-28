@@ -24,7 +24,7 @@
 <h2>
 Sisal translator check
 </h2>
-<script language=JavaScript>
+<script type="text/javascript">
 function trn() {
   ast=module.exports.parse(document.getElementById('source').value);
   console.log(ast);
@@ -41,10 +41,12 @@ function exc() {
 
 function vis() {
 xsl = XsltTransform.getXMLFromUrl('graphml2svg/graphml2svg.xsl');
-Layout.prepareGraphML(ir.toGraphML(), ir, function(xml) {
+Layout.prepareGraphML(ir.toGraphML(), ir, function (xml) {
+    var canvWidth = xml.getElementById('ir1').childNodes[0].getAttribute('width');
+    var canvHeight = xml.getElementById('ir1').childNodes[0].getAttribute('height');
     svgimg = XsltTransform.transformXslt(xml, xsl, {
-        canvasWidth: '400',
-        canvasHeight: '400',
+        canvasWidth: ((canvWidth | 0) + 100) + '',
+        canvasHeight: ((canvHeight | 0) + 100) + '',
         collapsedNodeWidth: '42',
         collapsedNodeHeight: '42'
     });
@@ -56,13 +58,27 @@ Layout.prepareGraphML(ir.toGraphML(), ir, function(xml) {
 }
 </script>
 <textarea id="source" rows="12" cols="80">
-function Main2( M,N : integer returns integer )
-	M+N*M
+function Main( M : integer returns array[real] )
+  for i in 1, M
+  returns array of 
+ 	1
+  end for
 end function
 </textarea>
 <!-- 
 function Main2( M,N : integer returns integer )
 	M+N
+end function
+
+function Main( M : integer returns array[real] )
+  for i in 1, M
+  returns array of 
+ 	1
+  end for
+end function
+
+function Main2( M,N : integer returns integer )
+	M+N*M
 end function
 -->
 <p><button onclick='trn();'>translate (result in console log)</button></p>

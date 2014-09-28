@@ -115,12 +115,16 @@
         <xsl:text>vertex </xsl:text>
         <xsl:choose>
           <xsl:when test="$vertex/graph">
-            <xsl:text>expanded</xsl:text>
+            <xsl:text>expanded </xsl:text>
           </xsl:when>
           <xsl:otherwise>
-            <xsl:text>collapsed</xsl:text>
+            <xsl:text>collapsed </xsl:text>
           </xsl:otherwise>
         </xsl:choose>
+        <xsl:variable name="types" select="$vertex/data[@key='type']" />
+        <xsl:for-each select="$types">
+          <xsl:value-of select="."/>
+        </xsl:for-each>
       </xsl:attribute>
       <rect>
         <xsl:attribute name="x">
@@ -130,7 +134,7 @@
           <xsl:value-of select="$zeroLevelPhase"/>
         </xsl:attribute>
         <xsl:attribute name="class">
-          <xsl:text>vertex-bg</xsl:text>
+          <xsl:text>vertex-bg </xsl:text>
         </xsl:attribute>
         <xsl:choose>
           <xsl:when test="$vertex/graph">
@@ -157,23 +161,39 @@
 
       <text>
         <xsl:attribute name="x">
-          <xsl:value-of select="$collapsedNodeWidth div 2"/>
+          <xsl:value-of select="$collapsedNodeWidth div 2 - 3"/>
         </xsl:attribute>
         <xsl:attribute name="y">
-          <xsl:value-of select="$collapsedNodeHeight div 2"/>
+          <xsl:value-of select="$collapsedNodeHeight div 2 + 3"/>
         </xsl:attribute>
+        
         <xsl:variable name="names" select="$vertex/data[@key='name']" />
-        <xsl:for-each select="$names">
-          <xsl:value-of select="."/>
-        </xsl:for-each>
         <xsl:variable name="ops" select="$vertex/data[@key='op']" />
-        <xsl:for-each select="$ops">
-          <xsl:value-of select="."/>
-        </xsl:for-each>
         <xsl:variable name="values" select="$vertex/data[@key='value']" />
-        <xsl:for-each select="$values">
-          <xsl:value-of select="."/>
-        </xsl:for-each>
+        <xsl:variable name="types" select="$vertex/data[@key='type']" />
+        
+        <xsl:choose>
+          <xsl:when test="$names">
+              <xsl:for-each select="$names">
+                <xsl:value-of select="."/>
+              </xsl:for-each>
+          </xsl:when>
+          <xsl:when test="$ops">
+              <xsl:for-each select="$ops">
+                <xsl:value-of select="."/>
+              </xsl:for-each>
+          </xsl:when>
+          <xsl:when test="$values">
+              <xsl:for-each select="$values">
+                <xsl:value-of select="."/>
+              </xsl:for-each>
+          </xsl:when>
+          <xsl:when test="$types">
+              <xsl:for-each select="$types">
+                <xsl:value-of select="."/>
+              </xsl:for-each>
+          </xsl:when>
+        </xsl:choose>
       </text>
 
       <xsl:variable name="nodeWidth">
@@ -287,6 +307,51 @@
         {
           display: none;
 	      }
+        
+        svg.vertex.function > rect.vertex-bg
+        {
+            stroke: brown;
+        }
+
+        svg.vertex.forall > rect.vertex-bg
+        {
+            stroke: #0066FF;
+        }
+
+        svg.vertex.rangeGen > rect.vertex-bg
+        {
+            stroke: brown;
+        }
+
+        svg.vertex.range > rect.vertex-bg
+        {
+            stroke: #9999FF;
+        }
+
+        svg.vertex.scatter > rect.vertex-bg
+        {
+            stroke: #6699FF;
+        }
+        
+        svg.vertex.loopReturn > rect.vertex-bg
+        {
+            stroke: brown;
+        }
+        
+        svg.vertex.constant > rect.vertex-bg
+        {
+            stroke: #666633;
+        }
+
+        svg.vertex.binary > rect.vertex-bg
+        {
+            stroke: green;
+        }
+        
+        svg.vertex.undefined > text
+        {
+            fill: transparent;
+        }
 
  	      circle.port,
 	      circle.subport	         
