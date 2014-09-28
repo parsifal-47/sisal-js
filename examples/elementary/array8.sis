@@ -1,0 +1,7 @@
+function foo(returns array[integer])
+   let
+      A := array[integer] [1, 2, 3]
+   in
+      addh(A, 4)
+   end let
+end function

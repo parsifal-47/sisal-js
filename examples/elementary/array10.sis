@@ -1,0 +1,4 @@
+function foo(A: array[integer]  returns array[integer], array[integer])
+   addh(A, 0),
+   addl(A, 1)
+end function

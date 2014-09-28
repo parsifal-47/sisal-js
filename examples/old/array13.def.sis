@@ -1,5 +1,0 @@
-definition main
-
-function main(A:array[array[integer]]  returns array[integer])
-   A[1!3 dot 1!3]
-end function

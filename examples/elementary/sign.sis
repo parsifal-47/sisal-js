@@ -1,0 +1,6 @@
+function sgn(N: integer returns integer)
+  if     N > 0 then  1
+  elseif N < 0 then -1
+  else               0
+  end if
+end function

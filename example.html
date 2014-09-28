@@ -6,11 +6,11 @@
 	<script src="graphml2svg/js/jquery.js" ></script>	
 
 
-	<script src="interpreter/lex.js" ></script>	
-	<script src="interpreter/ir.nodes.js" ></script>	
-	<script src="interpreter/ir.other.js" ></script>	
-	<script src="interpreter/ir.gen.js" ></script>	
-	<script src="interpreter/graphml.gen.js" ></script> 
+	<script src="lib/lex.js" ></script>
+	<script src="lib/ir.nodes.js" ></script>	
+	<script src="lib/ir.other.js" ></script>	
+	<script src="lib/ir.gen.js" ></script>	
+	<script src="lib/graphml.gen.js" ></script> 
 
 	<script src="graphml2svg/js/xslt.js" ></script>	
         <script src="graphml2svg/js/layout.js" ></script>	
@@ -26,16 +26,16 @@ Sisal translator check
 </h2>
 <script type="text/javascript">
 function trn() {
-  ast=module.exports.parse(document.getElementById('source').value);
+  var ast=lex.parse(document.getElementById('source').value);
   console.log(ast);
-  ir= new sisalir(ast);
+  var ir= new node.sisalir(ast);
   console.log(ir);
   console.log(ir.toGraphML());
   document.getElementById('visBtn').style.display = '';
 }
 function exc() {
-  ast=module.exports.parse(document.getElementById('source').value);
-  ir= new sisalir(ast);
+  var ast=lex.parse(document.getElementById('source').value);
+  var ir= new node.sisalir(ast);
   console.log(ir.execute());
 }
 

@@ -1,0 +1,13 @@
+function foo(N:integer returns integer)
+
+   for initial
+      i := 0;
+      s := 0
+   while (i<=N) repeat
+      s := old s + i;
+      i := old i + 1
+   returns value of s
+
+   end for
+
+end function

@@ -1,0 +1,3 @@
+function main(A:array[array[integer]]  returns array[integer])
+   addh(A[1], 0)
+end function

@@ -1,0 +1,3 @@
+function foo(returns integer)
+  2 + 1 
+end function

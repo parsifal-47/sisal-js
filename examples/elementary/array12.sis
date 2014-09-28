@@ -1,0 +1,7 @@
+function main(N: integer  returns array[integer])
+   let
+      A := array[array[integer]] [ [N, N, N], [N, N, N], [N, N, N] ]
+   in
+      A[2]
+   end let
+end function

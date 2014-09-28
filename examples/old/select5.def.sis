@@ -1,9 +1,0 @@
-definition main
-
-function foo(A:array[real]  returns array[real])
-   if (1=0) then
-            A
-          else
-            A
-   end if
-end function

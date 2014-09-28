@@ -1,0 +1,13 @@
+function foo(a:integer; b:integer  returns integer)
+   case (a)
+      of 0    then  2
+      of (case (b)
+             of 1  then 0
+             of 0  then 1
+             else       0
+          end case
+         )
+              then  10
+      else          30
+   end case
+end function

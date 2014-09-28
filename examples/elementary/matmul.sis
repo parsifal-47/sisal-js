@@ -1,0 +1,15 @@
+function main(A:array[array[real]]; B:array[array[real]]; N:integer
+              returns array[array[real]])
+   for i in 1, N cross j in 1, N
+   returns array of
+      for initial
+         s := 0.0;
+         k := 1
+      while (k <= N)
+      repeat
+         s := old s + A[i, old k] * B[old k, j];
+         k := old k + 1
+      returns value of s
+      end for
+   end for
+end function
