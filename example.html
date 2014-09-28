@@ -31,7 +31,6 @@ function trn() {
   var ir= new node.sisalir(ast);
   console.log(ir);
   console.log(ir.toGraphML());
-  document.getElementById('visBtn').style.display = '';
 }
 function exc() {
   var ast=lex.parse(document.getElementById('source').value);
@@ -40,18 +39,23 @@ function exc() {
 }
 
 function vis() {
-xsl = XsltTransform.getXMLFromUrl('graphml2svg/graphml2svg.xsl');
-Layout.prepareGraphML(ir.toGraphML(), ir, function (xml) {
-    var canvWidth = xml.getElementById('ir1').childNodes[0].getAttribute('width');
-    var canvHeight = xml.getElementById('ir1').childNodes[0].getAttribute('height');
-    svgimg = XsltTransform.transformXslt(xml, xsl, {
-        canvasWidth: ((canvWidth | 0) + 100) + '',
-        canvasHeight: ((canvHeight | 0) + 100) + '',
-        collapsedNodeWidth: '42',
-        collapsedNodeHeight: '42'
-    });
-    var node = Layout.getVisNode();
-    node.innerHTML = svgimg;
+  var ast=lex.parse(document.getElementById('source').value);
+  console.log(ast);
+  var ir= new node.sisalir(ast);
+
+  var xsl = XsltTransform.getXMLFromUrl('graphml2svg/graphml2svg.xsl');
+  Layout.prepareGraphML(ir.toGraphML(), ir, function (xml) {
+      var canvWidth = xml.getElementById('ir1').childNodes[0].getAttribute('width');
+      var canvHeight = xml.getElementById('ir1').childNodes[0].getAttribute('height');
+      svgimg = XsltTransform.transformXslt(xml, xsl, {
+          canvasWidth: ((canvWidth | 0) + 100) + '',
+          canvasHeight: ((canvHeight | 0) + 100) + '',
+          collapsedNodeWidth: '42',
+          collapsedNodeHeight: '42'
+      });
+      var node = Layout.getVisNode();
+      node.innerHTML = svgimg;
+      console.log(svgimg);
 });
 
 
@@ -83,7 +87,7 @@ end function
 -->
 <p><button onclick='trn();'>translate (result in console log)</button></p>
 <p><button onclick='exc();'>translate & execute (result in console log)</button></p>
-<p><button onclick='vis();' id='visBtn' style='display:none;'>vis (result in console log)</button></p>
+<p><button onclick='vis();'>show IR1 (result in console log)</button></p>
 
 Another example:
 <pre>
