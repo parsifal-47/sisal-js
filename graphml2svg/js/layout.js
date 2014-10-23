@@ -161,9 +161,9 @@
                     cache.fn = fn;
                     var d = JSON.stringify(g);
 
-                    //var url = 'http://paul.iis.nsk.su/layout/GraphLayout.ashx';
+                    var url = 'http://paul.iis.nsk.su/layout/GraphLayout.ashx';
 
-                    var url = 'http://localhost:16302/GraphLayout.ashx';
+                    //var url = 'http://localhost:16302/GraphLayout.ashx';
                     //var url = 'http://paul.iis.nsk.su/layout_local/Layout.svc/layout';
 
                     $.ajax({
