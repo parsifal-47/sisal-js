@@ -36,6 +36,7 @@
                                     var json = this.convertGraphMLToJson(child.childNodes[j]);
                                     this.performJsonGraph(json, function(layed) {
                                         if (true == Layout.convertJsonToGraphML(gml, layed)) {
+
                                             fn(gml);
                                         }
                                     });
@@ -187,6 +188,22 @@
                     if (typeof cache.fn == 'function') {
                         cache.fn(a);
                     }
+                },
+                getSizeOf: function(fragment) {
+                    var size = {};
+                    var canvWidth = 0;
+                    var canvHeight = 0;
+
+                    for (var i = 0; i < fragment.childNodes.length; i++) {
+                        var child = fragment.childNodes[i];
+                        canvWidth = Math.max(child.getAttribute('xx') * 1 + child.getAttribute('width') * 1, canvWidth);
+                        canvHeight = Math.max(child.getAttribute('yy') * 1 + child.getAttribute('height') * 1, canvHeight);
+                    }
+
+                    return {
+                        width: canvWidth,
+                        height: canvHeight
+                    };
                 }
             }
         })();

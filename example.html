@@ -47,11 +47,10 @@ function vis() {
 
   var xsl = XsltTransform.getXMLFromUrl('graphml2svg/graphml2svg.xsl');
   Layout.prepareGraphML(ir.toGraphML(), ir, function (xml) {
-      var canvWidth = xml.getElementById('ir1').childNodes[0].getAttribute('width');
-      var canvHeight = xml.getElementById('ir1').childNodes[0].getAttribute('height');
+      var canvSize = Layout.getSizeOf(xml.getElementById('ir1'));
       svgimg = XsltTransform.transformXslt(xml, xsl, {
-          canvasWidth: ((canvWidth | 0) + 100) + '',
-          canvasHeight: ((canvHeight | 0) + 100) + '',
+          canvasWidth: ((canvSize.width | 0) + 50) + '',
+          canvasHeight: ((canvSize.height | 0) + 50) + '',
           collapsedNodeWidth: '42',
           collapsedNodeHeight: '42'
       });
