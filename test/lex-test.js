@@ -3,7 +3,7 @@ var assert = buster.referee.assert;
 var fs = require("fs");
 
 function checkDir(path) {
-    var exclude = ["older", "complex", "controversial"];
+    var exclude = ["unsorted_and_weird", "complex", "controversial"];
     var data = fs.readdirSync(path);
     for (var i = 0; i<data.length; i++) {
         if (fs.lstatSync(path+data[i]).isDirectory()) {
