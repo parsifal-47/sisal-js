@@ -1,5 +1,3 @@
-definition main
-
 function main(A:array[array[integer]]  returns integer)
    let
       s := 0
