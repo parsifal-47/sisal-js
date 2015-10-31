@@ -1,96 +1,97 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-	<script src="graphml2svg/js/jquery.js" ></script>	
+    <script src="graphml2svg/js/jquery.js"></script>
 
 
-	<script src="lib/lex.js" ></script>
-	<script src="lib/ir.nodes.js" ></script>	
-	<script src="lib/ir.other.js" ></script>	
-	<script src="lib/ir.gen.js" ></script>	
-	<script src="lib/graphml.gen.js" ></script> 
+    <script src="lib/lex.js"></script>
+    <script src="lib/ir.nodes.js"></script>
+    <script src="lib/ir.other.js"></script>
+    <script src="lib/ir.gen.js"></script>
+    <script src="lib/graphml.gen.js"></script>
 
-	<script src="graphml2svg/js/xslt.js" ></script>	
-        <script src="graphml2svg/js/layout.js" ></script>	
+    <script src="graphml2svg/js/xslt.js"></script>
+    <script src="graphml2svg/js/layoutengine.js"></script>
+    <script src="graphml2svg/js/layout.js"></script>
 
-	<title>Parser</title>
+    <title>Parser</title>
 </head>
 
 <body>
 
-<div class="container" id="page">
-<h2>
-Sisal translator check
-</h2>
-<script type="text/javascript">
-function trn() {
-  var ast=lex.parse(document.getElementById('source').value);
-  console.log(ast);
-  var ir= new node.sisalir(ast);
-  console.log(ir);
-  console.log(ir.toGraphML());
-}
-function exc() {
-  var ast=lex.parse(document.getElementById('source').value);
-  var ir= new node.sisalir(ast);
-  ir.execute()
-  console.log(ir);
-  console.log(ir.toText());
-}
+    <div class="container" id="page">
+        <h2>
+            Sisal translator check
+        </h2>
+        <script type="text/javascript">
+            function trn() {
+                var ast = lex.parse(document.getElementById('source').value);
+                console.log(ast);
+                var ir = new node.sisalir(ast);
+                console.log(ir);
+                console.log(ir.toGraphML());
+            }
+            function exc() {
+                var ast = lex.parse(document.getElementById('source').value);
+                var ir = new node.sisalir(ast);
+                ir.execute()
+                console.log(ir);
+                console.log(ir.toText());
+            }
 
-function vis() {
-  var ast=lex.parse(document.getElementById('source').value);
-  console.log(ast);
-  var ir= new node.sisalir(ast);
+            function vis() {
+                var ast = lex.parse(document.getElementById('source').value);
+                console.log(ast);
+                var ir = new node.sisalir(ast);
 
-  var xsl = XsltTransform.getXMLFromUrl('graphml2svg/graphml2svg.xsl');
-  Layout.prepareGraphML(ir.toGraphML(), ir, function (xml) {
-      var canvSize = Layout.getSizeOf(xml.getElementById('ir1'));
-      svgimg = XsltTransform.transformXslt(xml, xsl, {
-          canvasWidth: ((canvSize.width | 0) + 50) + '',
-          canvasHeight: ((canvSize.height | 0) + 50) + '',
-          collapsedNodeWidth: '42',
-          collapsedNodeHeight: '42'
-      });
-      var node = Layout.getVisNode();
-      node.innerHTML = svgimg;
-      console.log(svgimg);
-});
+                var xsl = XsltTransform.getXMLFromUrl('graphml2svg/graphml2svg.xsl');
+                Layout.prepareGraphML(ir.toGraphML(), ir, function (xml) {
+                    var canvSize = Layout.getSizeOf(xml.getElementById('ir1'));
+                    svgimg = XsltTransform.transformXslt(xml, xsl, {
+                        canvasWidth: ((canvSize.width | 0) + 50) + '',
+                        canvasHeight: ((canvSize.height | 0) + 50) + '',
+                        collapsedNodeWidth: '42',
+                        collapsedNodeHeight: '42'
+                    });
+                    var node = Layout.getVisNode();
+                    node.innerHTML = svgimg;
+                    console.log(svgimg);
+                });
 
 
-}
-</script>
-<textarea id="source" rows="12" cols="80">
-function Main( M : integer returns array[real] )
-  for i in 1, M
-  returns array of 
- 	1
-  end for
-end function
-</textarea>
-<!-- 
-function Main2( M,N : integer returns integer )
-	M+N
-end function
+            }
+        </script>
+        <textarea id="source" rows="12" cols="80">
+            function Main( M : integer returns array[real] )
+            for i in 1, M
+            returns array of
+            1
+            end for
+            end function
+        </textarea>
+        <!--
+        function Main2( M,N : integer returns integer )
+            M+N
+        end function
 
-function Main( M : integer returns array[real] )
-  for i in 1, M
-  returns array of 
- 	1
-  end for
-end function
+        function Main( M : integer returns array[real] )
+          for i in 1, M
+          returns array of
+            1
+          end for
+        end function
 
-function Main2( M,N : integer returns integer )
-	M+N*M
-end function
--->
-<p><button onclick='trn();'>translate (result in console log)</button></p>
-<p><button onclick='exc();'>translate & execute (result in console log)</button></p>
-<p><button onclick='vis();'>show IR1 (result in console log)</button></p>
+        function Main2( M,N : integer returns integer )
+            M+N*M
+        end function
+        -->
+        <p><button onclick='trn();'>translate (result in console log)</button></p>
+        <p><button onclick='exc();'>translate & execute (result in console log)</button></p>
+        <p><button onclick='vis();'>show IR1 (result in console log)</button></p>
 
-Another example:
+        Another example:
 <pre>
 function Main( A,B: array[array[real]];  M,N,L : integer returns array[array[real]] )
   for i in 1, M cross j in 1, L
@@ -102,8 +103,7 @@ function Main( A,B: array[array[real]];  M,N,L : integer returns array[array[rea
   end for
 end function
 </pre>
-</div><!-- page -->
+    </div><!-- page -->
 
 </body>
 </html>
- 

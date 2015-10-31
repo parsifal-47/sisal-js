@@ -156,15 +156,26 @@
                     return result;
                 },
                 performJsonGraph: function(g, fn) {
-                    this.doExternalCall(g, fn);
+                    this.doInternalCall(g, fn);
+                    //this.doExternalCall(g, fn);
+                },
+                doInternalCall: function(jsonGraph, fn) {
+                    var helper = new GraphLib.EngineHelper();
+                    var graph = helper.createFromJson(jsonGraph);
+                    var engine = new GraphLib.Engine();
+                    var simpleNodeGeometry = new Details.Geometry(0, 0, 42, 42);
+                    var result = engine.perform(graph, new GraphLib.Settings(simpleNodeGeometry, 10, 10));
+                    fn({
+                        DoResult: { success: true, data: JSON.stringify(result) }
+                    });
                 },
                 doExternalCall: function (g, fn) {
                     cache.fn = fn;
                     var d = JSON.stringify(g);
 
-                    var url = 'http://paul.iis.nsk.su/layout/GraphLayout.ashx';
+                    //var url = 'http://paul.iis.nsk.su/layout/GraphLayout.ashx';
 
-                    //var url = 'http://localhost:16302/GraphLayout.ashx';
+                    var url = 'http://localhost:16302/GraphLayout.ashx';
                     //var url = 'http://paul.iis.nsk.su/layout_local/Layout.svc/layout';
 
                     $.ajax({
