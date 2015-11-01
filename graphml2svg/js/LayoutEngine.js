@@ -430,6 +430,7 @@ var Transformation;
     var FakeNode = Details.FakeNode;
     var FakeEdge = Details.FakeEdge;
     var getNodeKey = Utils.getNodeKey;
+    var Geometry = Details.Geometry;
     function toJsonWithoutHierarchy(node, geometry) {
         return {
             x: geometry.x,
@@ -478,6 +479,25 @@ var Transformation;
             route: getEdgeRoute(edge, geometry, nodedict)
         };
     }
+    function portToJson(port, geometry) {
+        return {
+            id: port.data.name,
+            x: geometry.x,
+            y: geometry.y,
+            width: geometry.w,
+            height: geometry.h,
+            graph: null
+        };
+    }
+    ;
+    function getPortGeometry(nodeGeometry, portIndex, portNumber, useNodeHeight) {
+        var x = nodeGeometry.w / (portNumber + 1) * (portIndex + 1);
+        var y = useNodeHeight ? nodeGeometry.h : 0;
+        var w = 42;
+        var h = 42;
+        return new Geometry(x, y, w, h);
+    }
+    ;
     function internalToJson(node, geometry, nodedict, topHierarchy) {
         var json;
         if (topHierarchy) {
@@ -499,6 +519,22 @@ var Transformation;
             }
             var jsonSubNode = internalToJson(subNode, geometry, nodedict, false);
             container.nodes.push(jsonSubNode);
+        }
+        if (node.iports.length + node.oports.length > 0) {
+            var jsonNodeKey = getNodeKey(node, nodedict);
+            var jsonNodeGeometry = geometry[jsonNodeKey];
+            for (var ipi = 0, iportCount = node.iports.length; ipi < iportCount; ipi++) {
+                var iPort = node.iports[ipi];
+                var iPortGeometry = getPortGeometry(jsonNodeGeometry, ipi, iportCount, false);
+                var jsonIPort = portToJson(iPort, iPortGeometry);
+                container.nodes.push(jsonIPort);
+            }
+            for (var opi = 0, oportCount = node.oports.length; opi < oportCount; opi++) {
+                var oPort = node.oports[opi];
+                var oPortGeometry = getPortGeometry(jsonNodeGeometry, opi, oportCount, true);
+                var jsonOPort = portToJson(oPort, oPortGeometry);
+                container.nodes.push(jsonOPort);
+            }
         }
         for (var ei = 0, edgeCount = node.edges.length; ei < edgeCount; ei++) {
             var edge = node.edges[ei];
@@ -533,9 +569,58 @@ var GraphLib;
         }
         Engine.prototype.perform = function (graph, settings) {
             var nodedict = getNestedNodesDictionary(graph);
-            var geometry = this.internalPerform(graph, nodedict, settings);
+            var geometry = {};
+            this.internalPerform(graph, nodedict, geometry, settings, true);
             var json = toJson(graph, geometry, nodedict);
             return json;
+        };
+        Engine.prototype.internalPerform = function (node, nodedict, geometry, settings, root) {
+            for (var ni = 0, nodeCount = node.nodes.length; ni < nodeCount; ni++) {
+                var subNode = node.nodes[ni];
+                this.internalPerform(subNode, nodedict, geometry, settings, false);
+            }
+            this.layoutSingleGraph(node, nodedict, geometry, settings);
+            if (!root) {
+                var nodeKey = getNodeKey(node, nodedict);
+                if (!geometry.hasOwnProperty(nodeKey)) {
+                    var s = settings.simpleNodeGeometry;
+                    geometry[nodeKey] = new Geometry(s.x, s.y, s.w, s.h);
+                }
+                var nodeGeometry = geometry[nodeKey];
+                var subNodeSize = this.getNodeSize(node, geometry, nodedict);
+                nodeGeometry.w = subNodeSize.w;
+                nodeGeometry.h = subNodeSize.h;
+            }
+        };
+        Engine.prototype.layoutSingleGraph = function (graph, nodedict, geometry, settings) {
+            if (graph.edges.length > 0) {
+                var levelAssigner = new GraphLib.LevelAssigner();
+                var levels = levelAssigner.assignLevelsToNodes(graph, nodedict);
+                var longEdgesSplitter = new GraphLib.LongEdgesSplitter();
+                longEdgesSplitter.split(graph, nodedict, levels);
+                levels = levelAssigner.assignLevelsToNodes(graph, nodedict);
+                var connectedGeometry = this.createEmptyGeometryFor(nodedict, settings);
+                this.appendGeometry(geometry, connectedGeometry);
+                var coordinatesAssigner = new GraphLib.CoordinatesAssigner();
+                coordinatesAssigner.assignCoordinatesToNodes(graph, nodedict, levels, geometry);
+                var coordinatesOptimizer = new GraphLib.CoordinatesOptimizer();
+                coordinatesOptimizer.optimizeCoordinatesToNodes(graph, nodedict, levels, geometry);
+            }
+            else if (graph.nodes.length > 0) {
+                var lastX = 42;
+                var lastY = 42;
+                var lastW = 0;
+                var deltW = settings.horizontalNodeGap;
+                for (var i = 0; i < graph.nodes.length; i++) {
+                    var n = graph.nodes[i];
+                    var nKey = getNodeKey(n, nodedict);
+                    var nGem = geometry[nKey];
+                    nGem.x = lastX + lastW + deltW * (i === 0 ? 0 : 1);
+                    nGem.y = lastY;
+                    lastX = nGem.x;
+                    lastW = nGem.w;
+                }
+            }
         };
         Engine.prototype.createEmptyGeometryFor = function (nodedict, settings) {
             var geometry = {};
@@ -547,36 +632,33 @@ var GraphLib;
             }
             return geometry;
         };
-        Engine.prototype.internalPerform = function (graph, nodedict, settings) {
-            var geometry;
-            if (graph.edges.length > 0) {
-                var levelAssigner = new GraphLib.LevelAssigner();
-                var levels = levelAssigner.assignLevelsToNodes(graph, nodedict);
-                var longEdgesSplitter = new GraphLib.LongEdgesSplitter();
-                longEdgesSplitter.split(graph, nodedict, levels);
-                levels = levelAssigner.assignLevelsToNodes(graph, nodedict);
-                geometry = this.createEmptyGeometryFor(nodedict, settings);
-                var coordinatesAssigner = new GraphLib.CoordinatesAssigner();
-                coordinatesAssigner.assignCoordinatesToNodes(graph, nodedict, levels, geometry);
-                var coordinatesOptimizer = new GraphLib.CoordinatesOptimizer();
-                coordinatesOptimizer.optimizeCoordinatesToNodes(graph, nodedict, levels, geometry);
-            }
-            else {
-                var lastX = 0;
-                var lastW = 0;
-                var deltW = settings.horizontalNodeGap;
-                geometry = this.createEmptyGeometryFor(nodedict, settings);
-                for (var i = 0; i < graph.nodes.length; i++) {
-                    var n = graph.nodes[i];
-                    var nKey = getNodeKey(n, nodedict);
-                    var nGem = geometry[nKey];
-                    nGem.x = lastX + lastW + deltW * (i === 0 ? 0 : 1);
-                    nGem.y = 0;
-                    lastX = nGem.x;
-                    lastW = nGem.w;
+        Engine.prototype.appendGeometry = function (leftGeometry, rightGeometry) {
+            for (var nodeKey in rightGeometry) {
+                if (rightGeometry.hasOwnProperty(nodeKey) && !leftGeometry.hasOwnProperty(nodeKey)) {
+                    leftGeometry[nodeKey] = rightGeometry[nodeKey];
                 }
             }
-            return geometry;
+        };
+        Engine.prototype.getNodeSize = function (node, geometry, nodedict) {
+            var w = 0;
+            var h = 0;
+            if (node.nodes.length > 0) {
+                for (var ni = 0; ni < node.nodes.length; ni++) {
+                    var subNode = node.nodes[ni];
+                    var key = getNodeKey(subNode, nodedict);
+                    var g = geometry[key];
+                    if (w < g.x + g.w) {
+                        w = g.x + g.w;
+                    }
+                    if (h < g.y + g.h) {
+                        h = g.y + g.h;
+                    }
+                }
+                return { w: w + 42 * 2, h: h + 42 * 2 };
+            }
+            else {
+                return { w: 42, h: 42 };
+            }
         };
         return Engine;
     })();
@@ -660,8 +742,18 @@ var GraphLib;
             if (json.nodes !== undefined) {
                 for (var ni = 0; ni < json.nodes.length; ni++) {
                     var jsonNode = json.nodes[ni];
-                    var node = this.internalCreateFromJson(jsonNode, nodedict);
-                    container.nodes.push(node);
+                    if (this.isNode(jsonNode)) {
+                        var node = this.internalCreateFromJson(jsonNode, nodedict);
+                        container.nodes.push(node);
+                    }
+                    else if (this.isInPort(jsonNode)) {
+                        var iPort = this.createPortFromJson(jsonNode, container);
+                        container.iports.push(iPort);
+                    }
+                    else if (this.isOutPort(jsonNode)) {
+                        var oPort = this.createPortFromJson(jsonNode, container);
+                        container.oports.push(oPort);
+                    }
                 }
                 for (var ei = 0; ei < json.edges.length; ei++) {
                     var jsonEdge = json.edges[ei];
@@ -696,8 +788,8 @@ var GraphLib;
             if (node.iports.length > 0) {
                 var piStr = space;
                 for (var ip = 0; ip < node.iports.length; ip++) {
-                    var p = node.iports[ip];
-                    piStr += this.portToString(p);
+                    var port = node.iports[ip];
+                    piStr += this.portToString(port);
                 }
                 str += space + piStr + '<br/>';
             }
@@ -736,6 +828,23 @@ var GraphLib;
             else {
                 throw new Error("empty array");
             }
+        };
+        EngineHelper.prototype.isNode = function (jsonNode) {
+            return !this.isInPort(jsonNode) && !this.isOutPort(jsonNode);
+        };
+        EngineHelper.prototype.isInPort = function (jsonNode) {
+            return this.endsWith(jsonNode.id, 'in\\d+');
+        };
+        EngineHelper.prototype.isOutPort = function (jsonNode) {
+            return this.endsWith(jsonNode.id, 'out\\d+');
+        };
+        EngineHelper.prototype.createPortFromJson = function (jsonNode, node) {
+            var portType = 'port type';
+            var port = new Port(node, new Description(portType, jsonNode.id));
+            return port;
+        };
+        EngineHelper.prototype.endsWith = function (input, pattern) {
+            return new RegExp(pattern + '$', 'i').test(input);
         };
         return EngineHelper;
     })();
