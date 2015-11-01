@@ -459,8 +459,14 @@ var Transformation;
         }
         return points;
     }
-    function getEdgeRoute(edge, geometry, nodedict) {
+    function getEdgeRoute(edge, geometry, nodedict, portsGeometry) {
         var points = getPointsOfEdge(edge, nodedict, geometry);
+        var sourcePortKey = edge.sourceNode.record.name + '::' + edge.sourcePort.data.name;
+        var sourcePortGeometry = portsGeometry[sourcePortKey];
+        points.splice(0, 0, sourcePortGeometry);
+        var targetPortKey = edge.targetNode.record.name + '::' + edge.targetPort.data.name;
+        var targetPortGeometry = portsGeometry[targetPortKey];
+        points.push(targetPortGeometry);
         var route = '';
         for (var pi = 0, length = points.length; pi < length; pi++) {
             var point = points[pi];
@@ -469,14 +475,14 @@ var Transformation;
         }
         return route;
     }
-    function edgeToJson(edge, geometry, nodedict) {
+    function edgeToJson(edge, geometry, nodedict, portsGeometry) {
         return {
             id: edge.description.name,
             f: edge.sourceNode != null ? edge.sourceNode.record.name : null,
             t: edge.targetNode != null ? edge.targetNode.record.name : null,
             tp: edge.targetPort.data.name,
             fp: edge.sourcePort.data.name,
-            route: getEdgeRoute(edge, geometry, nodedict)
+            route: getEdgeRoute(edge, geometry, nodedict, portsGeometry)
         };
     }
     function portToJson(port, geometry) {
@@ -498,7 +504,7 @@ var Transformation;
         return new Geometry(x, y, w, h);
     }
     ;
-    function internalToJson(node, geometry, nodedict, topHierarchy) {
+    function internalToJson(node, geometry, nodedict, topHierarchy, portsGeometry) {
         var json;
         if (topHierarchy) {
             json = { nodes: [], edges: [] };
@@ -517,7 +523,7 @@ var Transformation;
             if (subNode instanceof FakeNode) {
                 continue;
             }
-            var jsonSubNode = internalToJson(subNode, geometry, nodedict, false);
+            var jsonSubNode = internalToJson(subNode, geometry, nodedict, false, portsGeometry);
             container.nodes.push(jsonSubNode);
         }
         if (node.iports.length + node.oports.length > 0) {
@@ -527,13 +533,19 @@ var Transformation;
                 var iPort = node.iports[ipi];
                 var iPortGeometry = getPortGeometry(jsonNodeGeometry, ipi, iportCount, false);
                 var jsonIPort = portToJson(iPort, iPortGeometry);
-                container.nodes.push(jsonIPort);
+                if (container != null) {
+                    container.nodes.push(jsonIPort);
+                }
+                portsGeometry[iPort.data.name] = iPortGeometry;
             }
             for (var opi = 0, oportCount = node.oports.length; opi < oportCount; opi++) {
                 var oPort = node.oports[opi];
                 var oPortGeometry = getPortGeometry(jsonNodeGeometry, opi, oportCount, true);
                 var jsonOPort = portToJson(oPort, oPortGeometry);
-                container.nodes.push(jsonOPort);
+                if (container != null) {
+                    container.nodes.push(jsonOPort);
+                }
+                portsGeometry[oPort.data.name] = oPortGeometry;
             }
         }
         for (var ei = 0, edgeCount = node.edges.length; ei < edgeCount; ei++) {
@@ -541,13 +553,14 @@ var Transformation;
             if (edge instanceof FakeEdge) {
                 continue;
             }
-            var jsonEdge = edgeToJson(edge, geometry, nodedict);
+            var jsonEdge = edgeToJson(edge, geometry, nodedict, portsGeometry);
             container.edges.push(jsonEdge);
         }
         return json;
     }
     function toJson(node, geometry, nodedict) {
-        return internalToJson(node, geometry, nodedict, true);
+        var portsGeometry = {};
+        return internalToJson(node, geometry, nodedict, true, portsGeometry);
     }
     Transformation.toJson = toJson;
 })(Transformation || (Transformation = {}));
@@ -746,15 +759,22 @@ var GraphLib;
                         var node = this.internalCreateFromJson(jsonNode, nodedict);
                         container.nodes.push(node);
                     }
-                    else if (this.isInPort(jsonNode)) {
-                        var iPort = this.createPortFromJson(jsonNode, container);
+                }
+            }
+            if (json.ports !== undefined) {
+                for (var pi = 0; pi < json.ports.length; pi++) {
+                    var jsonPort = json.ports[pi];
+                    if (this.isInPort(jsonPort)) {
+                        var iPort = this.createPortFromJson(jsonPort, container);
                         container.iports.push(iPort);
                     }
-                    else if (this.isOutPort(jsonNode)) {
-                        var oPort = this.createPortFromJson(jsonNode, container);
+                    else if (this.isOutPort(jsonPort)) {
+                        var oPort = this.createPortFromJson(jsonPort, container);
                         container.oports.push(oPort);
                     }
                 }
+            }
+            if (json.edges !== undefined) {
                 for (var ei = 0; ei < json.edges.length; ei++) {
                     var jsonEdge = json.edges[ei];
                     var edge = this.createEdgeFromJson(jsonEdge, nodedict);

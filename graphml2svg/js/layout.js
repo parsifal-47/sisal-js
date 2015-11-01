@@ -47,17 +47,20 @@
                     }
                 },
                 convertGraphMLToJson: function(g) {
-                    var gr = { nodes: [], edges: [] };
+                    var gr = { nodes: [], edges: [], ports: [] };
 
                     for (var i = 0; i < g.childNodes.length; i++) {
                         var child = g.childNodes[i];
                         if (child.tagName == 'node') {
-                            var node = { id: child.id, width: 42, height: 42 };
+                            var node = { id: child.id, width: 42, height: 42, ports: [] };
 
                             for (var j = 0; j < child.childNodes.length; j++) {
                                 if (child.childNodes[j].tagName == 'graph') {
                                     node.graph = this.convertGraphMLToJson(child.childNodes[j]);
                                     break;
+                                } else if (child.childNodes[j].tagName == 'port') {
+                                    var port = { id: node.id + '::' + child.childNodes[j].getAttribute('name') };
+                                    node.ports.push(port);
                                 }
                             }
 
@@ -66,6 +69,7 @@
                         else if (child.tagName == 'port') {
                             var node = { id: g.id + ':' + child.getAttribute('name'), width: 42, height: 42 };
                             gr.nodes.push(node);
+                            gr.ports.push(node);
                         }
                         else if (child.tagName == 'edge') {
                             var fv = child.getAttribute('source');
