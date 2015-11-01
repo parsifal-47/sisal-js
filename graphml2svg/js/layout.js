@@ -145,7 +145,8 @@
                     var result = {};
                     for (var i = 0; i < g.edges.length; i++) {
                         var edge = g.edges[i];
-                        result[edge.f + '::' + edge.fp + '-' + edge.t + '::' + edge.tp] = edge;
+                        //result[edge.f + '::' + edge.fp + '-' + edge.t + '::' + edge.tp] = edge;
+                        result[edge.fp + '-' + edge.tp] = edge;
                     }
                     for (var i = 0; i < g.nodes.length; i++) {
                         var node = g.nodes[i];
