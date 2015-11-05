@@ -170,7 +170,6 @@ var GraphLib;
         }
         CoordinatesAssigner.prototype.assignCoordinatesToNodes = function (graph, nodedict, levels, geometry) {
             var levelHeights = this.getLevelHeights(nodedict, levels, geometry);
-            console.log(levelHeights);
             this.assignVerticalCoordinates(graph, nodedict, levels, levelHeights, geometry);
             var levelNodeMap = this.createLevelNodeMap(graph, nodedict, levels);
             this.assignHorizontalCoordinates(nodedict, levelNodeMap, geometry);
@@ -193,11 +192,6 @@ var GraphLib;
                     }
                 }
             }
-            for (var levelKey in levelHeights) {
-                if (levelHeights.hasOwnProperty(levelKey)) {
-                    levelHeights[levelKey] *= 2;
-                }
-            }
             return levelHeights;
         };
         CoordinatesAssigner.prototype.getLevelMap = function (nodedict, levels, geometry) {
@@ -218,7 +212,7 @@ var GraphLib;
             for (var key in levelHeights) {
                 if (levelHeights.hasOwnProperty(key)) {
                     if (key < nodeLevel) {
-                        sum += levelHeights[key];
+                        sum += levelHeights[key] + 30;
                     }
                 }
             }
@@ -230,7 +224,7 @@ var GraphLib;
                     var nodeLevel = levels[key];
                     var previousLevelsHeight = this.getPreviousLevelsHeight(nodeLevel, levelHeights);
                     var nodeGeometry = geometry[key];
-                    nodeGeometry.y = previousLevelsHeight + nodeGeometry.h + 20;
+                    nodeGeometry.y = previousLevelsHeight + nodeGeometry.h;
                 }
             }
         };
@@ -279,7 +273,7 @@ var GraphLib;
         function CoordinatesOptimizer() {
         }
         CoordinatesOptimizer.prototype.optimizeCoordinatesToNodes = function (graph, nodedict, levels, geometry) {
-            var graphWidth = this.getGraphWidth(nodedict, geometry);
+            var graphWidth = this.getGraphWidth(graph, nodedict, geometry);
             var currentPortLocation = this.getInputPortCoordinates(graph.iports, graphWidth);
             var filteredEdges = this.getFilteredEdges(graph.edges);
             var ports = this.getTargetPorts(graph.iports, filteredEdges);
@@ -402,17 +396,17 @@ var GraphLib;
             x /= nodes.length;
             return x;
         };
-        CoordinatesOptimizer.prototype.getGraphWidth = function (nodedict, geometry) {
+        CoordinatesOptimizer.prototype.getGraphWidth = function (graph, nodedict, geometry) {
             var w = 0;
-            for (var nodeKey in nodedict) {
-                if (nodedict.hasOwnProperty(nodeKey)) {
-                    var nodeGeometry = geometry[nodeKey];
-                    if (nodeGeometry.x + nodeGeometry.w > w) {
-                        w = nodeGeometry.x + nodeGeometry.w;
-                    }
+            for (var ni = 0; ni < graph.nodes.length; ni++) {
+                var node = graph.nodes[ni];
+                var nodeKey = getNodeKey(node, nodedict);
+                var nodeGeometry = geometry[nodeKey];
+                if (nodeGeometry.x + nodeGeometry.w > w) {
+                    w = nodeGeometry.x + nodeGeometry.w;
                 }
             }
-            return w;
+            return w + 42;
         };
         CoordinatesOptimizer.prototype.getFilteredEdges = function (edges) {
             var excludedRealEdges = new Array(0);
@@ -483,13 +477,13 @@ var Transformation;
         var targetPortGeometry = portsGeometry[targetPortKey];
         var sourcePortPoint = { x: sourcePortGeometry.x, y: sourcePortGeometry.y };
         var targetPortPoint = { x: targetPortGeometry.x, y: targetPortGeometry.y };
-        if (getPortDepth(sourcePortKey) < getPortDepth(targetPortKey)) {
+        if (getPortDepth(sourcePortKey) <= getPortDepth(targetPortKey)) {
             var targetNodeKey = getNodeKey(edge.targetNode, nodedict);
             var targetNodeGeometry = geometry[targetNodeKey];
             targetPortPoint.x += targetNodeGeometry.x;
             targetPortPoint.y += targetNodeGeometry.y;
         }
-        else if (getPortDepth(sourcePortKey) > getPortDepth(targetPortKey)) {
+        if (getPortDepth(sourcePortKey) >= getPortDepth(targetPortKey)) {
             var sourceNodeKey = getNodeKey(edge.sourceNode, nodedict);
             var sourceNodeGeometry = geometry[sourceNodeKey];
             sourcePortPoint.x += sourceNodeGeometry.x;
@@ -500,7 +494,7 @@ var Transformation;
         var route = '';
         for (var pi = 0, length = points.length; pi < length; pi++) {
             var point = points[pi];
-            route += pi === length - 1 ? 'L ' : 'M ';
+            route += pi === 0 ? 'M ' : 'L ';
             route += point.x + ',' + point.y + ' ';
         }
         return route;
@@ -697,7 +691,7 @@ var GraphLib;
                         h = g.y + g.h;
                     }
                 }
-                return { w: w + 42 * 2, h: h + 42 * 2 };
+                return { w: w + 42, h: h + 42 };
             }
             else {
                 return { w: 42, h: 42 };
@@ -946,7 +940,7 @@ var GraphLib;
             for (var levelKey in rawlevels) {
                 if (rawlevels.hasOwnProperty(levelKey)) {
                     if (Math.abs(rawlevels[levelKey]) < Infinity) {
-                        levels[levelKey] = marker + 1 - rawlevels[levelKey];
+                        levels[levelKey] = marker - rawlevels[levelKey];
                     }
                 }
             }
@@ -1030,14 +1024,16 @@ var GraphLib;
             }
             else if (tNode !== graph) {
                 // port -> node
-                var sNodeLevelVirtual = this.getMaxNodeLevel(levels) + 1;
                 var tNodeKey2 = getNodeKey(tNode, nodedict);
                 var tNodeLevel2 = levels[tNodeKey2];
-                return Math.abs(sNodeLevelVirtual - tNodeLevel2);
+                return Math.abs(tNodeLevel2);
             }
             else if (sNode !== graph) {
                 // node -> port
-                return 1;
+                var sNodeLevelVirtual = this.getMaxNodeLevel(levels) + 1;
+                var sNodeKey2 = getNodeKey(sNode, nodedict);
+                var sNodeLevel2 = levels[sNodeKey2];
+                return Math.abs(sNodeLevelVirtual - sNodeLevel2);
             }
             else {
                 // port -> port
