@@ -172,7 +172,9 @@ var GraphLib;
 (function (GraphLib) {
     var getNodeKey = Utils.getNodeKey;
     var CoordinatesAssigner = (function () {
-        function CoordinatesAssigner() {
+        function CoordinatesAssigner(dw, dh) {
+            this.dh = dh;
+            this.dw = dw;
         }
         CoordinatesAssigner.prototype.assignCoordinatesToNodes = function (graph, nodedict, levels, geometry) {
             var levelHeights = this.getLevelHeights(nodedict, levels, geometry);
@@ -220,7 +222,7 @@ var GraphLib;
             for (var key in levelHeights) {
                 if (levelHeights.hasOwnProperty(key)) {
                     if (key < nodeLevel) {
-                        sum += levelHeights[key] + 30;
+                        sum += levelHeights[key] + this.dh;
                     }
                 }
             }
@@ -233,7 +235,7 @@ var GraphLib;
                 var nodeLevel = levels[nodeKey];
                 var previousLevelsHeight = this.getPreviousLevelsHeight(nodeLevel, levelHeights);
                 var nodeGeometry = geometry[nodeKey];
-                nodeGeometry.y = previousLevelsHeight + nodeGeometry.h;
+                nodeGeometry.y = previousLevelsHeight + this.dh;
             }
         };
         CoordinatesAssigner.prototype.createLevelNodeMap = function (graph, nodedict, levels) {
@@ -251,14 +253,13 @@ var GraphLib;
             for (var level in levelNodeMap) {
                 if (levelNodeMap.hasOwnProperty(level)) {
                     var nodes = levelNodeMap[level];
-                    var x = 0;
+                    var lastX = this.dw;
                     for (var ni = 0; ni < nodes.length; ni++) {
                         var node = nodes[ni];
                         var nodeKey = getNodeKey(node, nodedict);
                         var nodeGeometry = geometry[nodeKey];
-                        nodeGeometry.x = x; // check next instruction;
-                        x += nodeGeometry.w;
-                        x += 30;
+                        nodeGeometry.x = lastX; // check next instruction;
+                        lastX += nodeGeometry.w + this.dw;
                     }
                 }
             }
@@ -284,19 +285,19 @@ var GraphLib;
             var currentPortLocation = this.getInputPortCoordinates(graph.iports, graphWidth);
             var filteredEdges = this.getFilteredEdges(graph.edges);
             var ports = this.getTargetPorts(graph.iports, filteredEdges);
-            var currentNodes = this.getNodesOfPorts(ports);
+            var currentNodes = this.getNodesOfPorts(graph, ports);
             this.allocateNodesBySourcePorts(currentNodes, nodedict, geometry, graph, currentPortLocation);
-            currentNodes = this.getNextCurrentNodes(currentNodes, filteredEdges);
+            currentNodes = this.getNextCurrentNodes(graph, currentNodes, filteredEdges);
             while (currentNodes.length > 0) {
                 this.allocateNodesBySourceNodes(currentNodes, nodedict, geometry, graph);
-                currentNodes = this.getNextCurrentNodes(currentNodes, filteredEdges);
+                currentNodes = this.getNextCurrentNodes(graph, currentNodes, filteredEdges);
             }
         };
-        CoordinatesOptimizer.prototype.getNodesOfPorts = function (ports) {
+        CoordinatesOptimizer.prototype.getNodesOfPorts = function (graph, ports) {
             var nodes = new Array(0);
             for (var pi = 0; pi < ports.length; pi++) {
                 var node = ports[pi].node;
-                if (node !== undefined && nodes.indexOf(node) === -1) {
+                if (node !== graph && nodes.indexOf(node) === -1) {
                     nodes.push(node);
                 }
             }
@@ -360,22 +361,23 @@ var GraphLib;
                 var nodeSourcePorts = this.getSourcePorts(node.iports, graph.edges);
                 var oldX = nodeGeometry.x;
                 nodeGeometry.x = this.getMeanHorizontalCoord(nodeSourcePorts, graph.iports, portHorizontalCoord);
+                nodeGeometry.x -= nodeGeometry.w / 2;
                 if (nodeGeometry.x > oldX) {
                     this.shiftNodesToRight(nodes, nodedict, geometry, ni + 1, nodeGeometry.x - oldX);
                 }
             }
         };
-        CoordinatesOptimizer.prototype.getNextCurrentNodes = function (nodes, edges) {
+        CoordinatesOptimizer.prototype.getNextCurrentNodes = function (graph, currentNodes, edges) {
             var oports = new Array(0);
-            for (var ni = 0; ni < nodes.length; ni++) {
-                var node = nodes[ni];
+            for (var ni = 0; ni < currentNodes.length; ni++) {
+                var node = currentNodes[ni];
                 for (var opi = 0; opi < node.oports.length; opi++) {
                     var oport = node.oports[opi];
                     oports.push(oport);
                 }
             }
             var targetPorts = this.getTargetPorts(oports, edges);
-            var targetNodes = this.getNodesOfPorts(targetPorts);
+            var targetNodes = this.getNodesOfPorts(graph, targetPorts);
             return targetNodes;
         };
         CoordinatesOptimizer.prototype.allocateNodesBySourceNodes = function (nodes, nodedict, geometry, graph) {
@@ -384,7 +386,7 @@ var GraphLib;
                 var nodeKey = getNodeKey(node, nodedict);
                 var nodeGeometry = geometry[nodeKey];
                 var nodeSourcePorts = this.getSourcePorts(node.iports, graph.edges);
-                var sourceNodes = this.getNodesOfPorts(nodeSourcePorts);
+                var sourceNodes = this.getNodesOfPorts(graph, nodeSourcePorts);
                 var oldX = nodeGeometry.x;
                 nodeGeometry.x = this.getMeanHorizontalCoordinate(sourceNodes, nodedict, geometry);
                 if (nodeGeometry.x > oldX) {
@@ -645,7 +647,7 @@ var GraphLib;
                 levels = levelAssigner.assignLevelsToNodes(graph, nodedict);
                 var connectedGeometry = this.createEmptyGeometryFor(nodedict, settings);
                 this.appendGeometry(geometry, connectedGeometry);
-                var coordinatesAssigner = new GraphLib.CoordinatesAssigner();
+                var coordinatesAssigner = new GraphLib.CoordinatesAssigner(settings.horizontalNodeGap, settings.verticalNodeGap);
                 coordinatesAssigner.assignCoordinatesToNodes(graph, nodedict, levels, geometry);
                 var coordinatesOptimizer = new GraphLib.CoordinatesOptimizer();
                 coordinatesOptimizer.optimizeCoordinatesToNodes(graph, nodedict, levels, geometry);
@@ -946,9 +948,8 @@ var GraphLib;
             var maxLevel = this.getMaxLevel(rawlevels);
             var topConstantNodes = this.getTopConstantNodes(graph.nodes, nodedict, rawlevels, maxLevel);
             if (topConstantNodes.length > 0) {
-                maxLevel = maxLevel + 1;
             }
-            var levels = this.getReversedLevels(rawlevels, maxLevel);
+            var levels = this.getReversedLevels(rawlevels, maxLevel + 1);
             return levels;
         };
         LevelAssigner.prototype.getSourceNodes = function (ports, exceptNode) {

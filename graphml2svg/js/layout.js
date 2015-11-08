@@ -168,8 +168,8 @@
                     var helper = new GraphLib.EngineHelper();
                     var graph = helper.createFromJson(jsonGraph);
                     var engine = new GraphLib.Engine();
-                    var simpleNodeGeometry = new Details.Geometry(0, 0, 42, 42);
-                    var result = engine.perform(graph, new GraphLib.Settings(simpleNodeGeometry, 10, 10));
+                    var simpleNodeGeometry = new Details.Geometry(0, 0, 0, 0);
+                    var result = engine.perform(graph, new GraphLib.Settings(simpleNodeGeometry, 30, 30));
                     fn({
                         DoResult: { success: true, data: JSON.stringify(result) }
                     });
