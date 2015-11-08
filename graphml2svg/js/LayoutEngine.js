@@ -114,11 +114,13 @@ var Utils;
     function clone(source) {
         var cloneObj = new source.constructor;
         for (var attribut in source) {
-            if (typeof source[attribut] === "object") {
-                cloneObj[attribut] = clone(source[attribut]);
-            }
-            else {
-                cloneObj[attribut] = source[attribut];
+            if (source.hasOwnProperty(attribut)) {
+                if (typeof source[attribut] === "object") {
+                    cloneObj[attribut] = clone(source[attribut]);
+                }
+                else {
+                    cloneObj[attribut] = source[attribut];
+                }
             }
         }
         return cloneObj;
@@ -153,7 +155,11 @@ var Utils;
         var dict = {};
         var nodes = getAllNestedNodes(node);
         for (var i = 0; i < nodes.length; i++) {
-            dict[i.toString()] = nodes[i];
+            var nestedNode = nodes[i];
+            if (nestedNode.record.name === '') {
+                throw new Error('cannot detect node name');
+            }
+            dict[nestedNode.record.name] = nestedNode;
         }
         return dict;
     }
@@ -199,10 +205,12 @@ var GraphLib;
             for (var nodeKey in nodedict) {
                 if (nodedict.hasOwnProperty(nodeKey)) {
                     var level = levels[nodeKey];
-                    if (levelMap[level] === undefined) {
-                        levelMap[level] = new Array(0);
+                    if (level !== undefined) {
+                        if (levelMap[level] === undefined) {
+                            levelMap[level] = new Array(0);
+                        }
+                        levelMap[level].push(geometry[nodeKey]);
                     }
-                    levelMap[level].push(geometry[nodeKey]);
                 }
             }
             return levelMap;
@@ -219,24 +227,23 @@ var GraphLib;
             return sum;
         };
         CoordinatesAssigner.prototype.assignVerticalCoordinates = function (graph, nodedict, levels, levelHeights, geometry) {
-            for (var key in nodedict) {
-                if (nodedict.hasOwnProperty(key) && nodedict[key] !== graph) {
-                    var nodeLevel = levels[key];
-                    var previousLevelsHeight = this.getPreviousLevelsHeight(nodeLevel, levelHeights);
-                    var nodeGeometry = geometry[key];
-                    nodeGeometry.y = previousLevelsHeight + nodeGeometry.h;
-                }
+            for (var ni = 0; ni < graph.nodes.length; ni++) {
+                var node = graph.nodes[ni];
+                var nodeKey = getNodeKey(node, nodedict);
+                var nodeLevel = levels[nodeKey];
+                var previousLevelsHeight = this.getPreviousLevelsHeight(nodeLevel, levelHeights);
+                var nodeGeometry = geometry[nodeKey];
+                nodeGeometry.y = previousLevelsHeight + nodeGeometry.h;
             }
         };
         CoordinatesAssigner.prototype.createLevelNodeMap = function (graph, nodedict, levels) {
             var map = {};
-            for (var key in nodedict) {
-                if (nodedict.hasOwnProperty(key) && nodedict[key] !== graph) {
-                    var node = nodedict[key];
-                    var nodeLevel = levels[key];
-                    var nodes = map[nodeLevel] || (map[nodeLevel] = new Array(0));
-                    nodes.push(node);
-                }
+            for (var ni = 0; ni < graph.nodes.length; ni++) {
+                var node = graph.nodes[ni];
+                var nodeKey = getNodeKey(node, nodedict);
+                var nodeLevel = levels[nodeKey];
+                var nodes = map[nodeLevel] || (map[nodeLevel] = new Array(0));
+                nodes.push(node);
             }
             return map;
         };
@@ -909,6 +916,11 @@ var GraphLib;
     })();
     GraphLib.EngineHelper = EngineHelper;
 })(GraphLib || (GraphLib = {}));
+///<reference path="../Abstraction/INode.ts"/>
+///<reference path="../Abstraction/IEdge.ts"/>
+///<reference path="../Abstraction/IGeometry.ts"/>
+///<reference path="../Details/Fake/FakeEdge.ts"/>
+///<reference path="../Utils/Utils.ts"/>
 var GraphLib;
 (function (GraphLib) {
     var getNodeKey = Utils.getNodeKey;
@@ -916,12 +928,7 @@ var GraphLib;
         function LevelAssigner() {
         }
         LevelAssigner.prototype.assignLevelsToNodes = function (graph, nodedict) {
-            var rawlevels = {};
-            for (var key in nodedict) {
-                if (nodedict.hasOwnProperty(key)) {
-                    rawlevels[key] = Number.NEGATIVE_INFINITY;
-                }
-            }
+            var rawlevels = this.getInitialLevels(graph.nodes, nodedict);
             var targetPorts = graph.oports;
             var marker = 0;
             while (targetPorts.length > 0) {
@@ -936,14 +943,12 @@ var GraphLib;
                 targetPorts = this.getTargetPorts(sourceNodes);
                 marker += 1;
             }
-            var levels = {};
-            for (var levelKey in rawlevels) {
-                if (rawlevels.hasOwnProperty(levelKey)) {
-                    if (Math.abs(rawlevels[levelKey]) < Infinity) {
-                        levels[levelKey] = marker - rawlevels[levelKey];
-                    }
-                }
+            var maxLevel = this.getMaxLevel(rawlevels);
+            var topConstantNodes = this.getTopConstantNodes(graph.nodes, nodedict, rawlevels, maxLevel);
+            if (topConstantNodes.length > 0) {
+                maxLevel = maxLevel + 1;
             }
+            var levels = this.getReversedLevels(rawlevels, maxLevel);
             return levels;
         };
         LevelAssigner.prototype.getSourceNodes = function (ports, exceptNode) {
@@ -978,6 +983,51 @@ var GraphLib;
                 }
             }
             return ports;
+        };
+        LevelAssigner.prototype.getInitialLevels = function (nodes, nodedict) {
+            var levels = {};
+            for (var ni = 0; ni < nodes.length; ni++) {
+                var node = nodes[ni];
+                var nodeKey = getNodeKey(node, nodedict);
+                levels[nodeKey] = Number.NEGATIVE_INFINITY;
+            }
+            return levels;
+        };
+        LevelAssigner.prototype.getReversedLevels = function (rawlevels, maxLevel) {
+            var levels = {};
+            for (var levelKey in rawlevels) {
+                if (rawlevels.hasOwnProperty(levelKey)) {
+                    if (Math.abs(rawlevels[levelKey]) < Infinity) {
+                        levels[levelKey] = maxLevel - rawlevels[levelKey];
+                    }
+                }
+            }
+            return levels;
+        };
+        LevelAssigner.prototype.getTopConstantNodes = function (nodes, nodedict, rawlevels, maxLevel) {
+            var constantNodes = new Array(0);
+            for (var ni = 0; ni < nodes.length; ni++) {
+                var node = nodes[ni];
+                if (node.iports.length === 0) {
+                    var nodeKey = getNodeKey(node, nodedict);
+                    var nodeLevel = rawlevels[nodeKey];
+                    if (nodeLevel === maxLevel) {
+                        constantNodes.push(node);
+                    }
+                }
+            }
+            return constantNodes;
+        };
+        LevelAssigner.prototype.getMaxLevel = function (levels) {
+            var max = 0;
+            for (var index in levels) {
+                if (levels.hasOwnProperty(index)) {
+                    if (levels[index] > max) {
+                        max = levels[index];
+                    }
+                }
+            }
+            return max;
         };
         return LevelAssigner;
     })();
