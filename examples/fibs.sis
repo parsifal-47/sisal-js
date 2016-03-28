@@ -1,0 +1,7 @@
+function Fib( M : integer returns integer )
+  if M < 2 then
+    M
+  else
+    Fib(M - 1) + Fib(M - 2)
+  end if
+end function
