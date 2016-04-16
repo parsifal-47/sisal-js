@@ -8,13 +8,9 @@
 
             return {
                 prepareGraphML: function(xml, json, fn) {
-                    var xml2 = XsltTransform.getXMLFromString(xml);
+                    var xml = XsltTransform.getXMLFromString(xml);
 
-                    //console.log(xml2);
-                    
-                    this.doLayout(xml2, fn); // external service
-
-                    //fn(xml2); // internal service
+                    this.doLayout(xml, fn);
                 },
                 getVisNode: function(nodeid) {
                     var nodeid = nodeid || 'visimg';
