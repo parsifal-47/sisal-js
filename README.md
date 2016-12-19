@@ -3,7 +3,7 @@ Sisal-js
 
 Javascript interpreter for sisal
 
-work in progress
+Please consider [sisal-is](https://github.com/parsifal-47/sisal-is) as a next version of this language.
 
 translate simple sisal 3.0 programs to internal representation IR1
 
